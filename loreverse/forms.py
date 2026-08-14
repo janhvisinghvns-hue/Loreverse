@@ -11,7 +11,7 @@ class ProfileForm(forms.ModelForm):
 class StoryForm(forms.ModelForm):
     class Meta:
         model = Story
-        fields = ["title", "description"]
+        fields = ["title", "genre", "tags", "description"]
 
 class ChapterForm(forms.ModelForm):
     class Meta:

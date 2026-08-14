@@ -8,7 +8,17 @@ class Profile(models.Model):
     profile_picture = models.ImageField(upload_to="profile_pictures/", blank=True)
 
 class Story(models.Model):
+    GENRE_CHOICES = [
+        ("Fantasy", "Fantasy"),
+        ("Romance", "Romance"),
+        ("Mystery", "Mystery"),
+        ("Horror", "Horror"),
+        ("Science Fiction", "Science Fiction"),
+        ("Adventure", "Adventure"),
+        ("Other", "Other"),]
     title = models.CharField(max_length=200)
+    genre = models.CharField(max_length=30, choices=GENRE_CHOICES, default="Other")
+    tags = models.CharField(max_length=300, blank=True)
     description = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     published = models.BooleanField(default=False)
@@ -16,6 +26,7 @@ class Story(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     favorited_by = models.ManyToManyField(User, related_name="favorite_stories", blank=True)
     want_to_read_by = models.ManyToManyField(User, related_name="want_to_read_stories", blank=True)
+    
 
     def __str__(self):
         return self.title

@@ -4,17 +4,59 @@
 
 <h2>Published Stories</h2>
 
+<form method="get">
+
+    <select name="genre">
+        <option value="">All Genres</option>
+
+        {% for value, label in genre_choices %}
+            <option value="{{ value }}"
+                {% if genre == value %}selected{% endif %}>
+                {{ label }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <input type="text" name="tag" placeholder="Search by tag..." value="{{ tag }}">
+
+    <select name="sort">
+        <option value="">Default</option>
+        <option value="newest"
+            {% if sort == "newest" %}selected{% endif %}>
+            Newest
+        </option>
+        <option value="oldest"
+           {% if sort == "oldest" %}selected{% endif %}>
+            Oldest
+         </option>
+
+    </select>
+
+    <button type="submit">Apply Filters</button>
+
+</form>
+
+<br>
+
 {% if stories %}
     {% for story in stories %}
-        <h3> <a href="{% url 'story_detail' story.id %}"> {{ story.title }} </a></h3>
+
+        <h3>
+            <a href="{% url 'story_detail' story.id %}">
+                {{ story.title }}
+            </a>
+        </h3>
 
         <p>{{ story.description }}</p>
+        <p>Genre: {{ story.get_genre_display }}</p>
+        <p>Tags: {{ story.tags }}</p>
         <p>Written by {{ story.author.username }}</p>
 
         <hr>
+
     {% endfor %}
 {% else %}
-    <p>No published stories yet.</p>
+    <p>No stories found.</p>
 {% endif %}
 
 {% endblock %}

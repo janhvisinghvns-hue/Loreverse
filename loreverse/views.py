@@ -9,17 +9,28 @@ from .forms import ProfileForm , StoryForm , ChapterForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
+from django.db.models import Q
 
 
 def index(request):
     progress = None
+
     if request.user.is_authenticated:
         progress = ReadingProgress.objects.filter(
             user=request.user
         ).select_related("story", "chapter").first()
 
+    fantasy_stories = Story.objects.filter(published=True, genre="Fantasy")[:5]
+
+    mystery_stories = Story.objects.filter(published=True,genre="Mystery")[:5]
+
+    adventure_stories = Story.objects.filter(published=True,genre="Adventure")[:5]
+
     return render(request, "loreverse/index.html", {
-        "progress": progress
+        "progress": progress,
+        "fantasy_stories": fantasy_stories,
+        "mystery_stories": mystery_stories,
+        "adventure_stories": adventure_stories,
     })
 
 
@@ -191,8 +202,31 @@ def publish_story(request, story_id):
     return redirect("my_stories")
 
 def published_stories(request):
+    query = request.GET.get("q", "").strip()
+    genre = request.GET.get("genre", "").strip()
+    tag = request.GET.get("tag", "").strip()
+    sort = request.GET.get("sort", "").strip()
     stories = Story.objects.filter(published=True)
-    return render(request, "loreverse/published_stories.html", {"stories": stories})
+    if query:
+        stories = stories.filter(
+            Q(title__icontains=query) |
+            Q(author__username__icontains=query)
+        )
+    if genre:
+        stories = stories.filter(genre=genre)
+
+    if tag:
+        stories = stories.filter(tags__icontains=tag)    
+
+    if sort == "newest":
+        stories = stories.order_by("-created_at")  
+    elif sort == "oldest":
+         stories = stories.order_by("created_at")    
+
+    return render(request, "loreverse/published_stories.html", {
+        "stories": stories, "query": query, "genre": genre, 
+        "tag": tag, "sort": sort, "genre_choices": Story.GENRE_CHOICES,
+    })
 
 def story_detail(request, story_id):
     story = get_object_or_404(Story, id=story_id, published=True)

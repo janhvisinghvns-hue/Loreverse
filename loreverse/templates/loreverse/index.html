@@ -8,8 +8,6 @@
 
     <p>Discover and read stories from different worlds.</p>
 
-    <a href="{% url 'published_stories' %}" class="btn btn-primary">Browse Stories</a>
-
     {% if user.is_authenticated %}
         {% if progress %}
             <hr>
@@ -22,19 +20,74 @@
                 {{ progress.chapter.title }}
             </p>
 
-            <a class="btn btn-success"  href="{% url 'continue_reading' progress.story.id %}"> Continue Reading </a>
+            <a class="btn btn-success" href="{% url 'continue_reading' progress.story.id %}">Continue Reading</a>
         {% endif %}
+    {% endif %}
 
-        <hr>
 
-        <hr>
+    <hr>
 
+    <h3>Fantasy</h3>
+
+    {% if fantasy_stories %}
+        {% for story in fantasy_stories %}
+            <h4>
+                <a href="{% url 'story_detail' story.id %}">{{ story.title }}</a>
+            </h4>
+
+            <p>Written by {{ story.author.username }}</p>
+        {% endfor %}
+    {% else %}
+        <p>No Fantasy stories yet.</p>
+    {% endif %}
+
+    
+    <hr>
+
+    <h3>Mystery</h3>
+
+    {% if mystery_stories %}
+        {% for story in mystery_stories %}
+            <h4>
+                <a href="{% url 'story_detail' story.id %}">{{ story.title }}</a>
+            </h4>
+
+            <p>Written by {{ story.author.username }}</p>
+        {% endfor %}
+    {% else %}
+        <p>No Mystery stories yet.</p>
+    {% endif %}
+
+    <hr>
+
+    <h3>Adventure</h3>
+
+    {% if adventure_stories %}
+        {% for story in adventure_stories %}
+            <h4>
+                <a href="{% url 'story_detail' story.id %}">{{ story.title }}</a>
+            </h4>
+
+            <p>Written by {{ story.author.username }}</p>
+        {% endfor %}
+    {% else %}
+        <p>No Adventure stories yet.</p>
+    {% endif %}
+
+    <hr>
+
+    
+    <a href="{% url 'published_stories' %}" class="btn btn-primary">Browse All Stories</a>
+
+   
+    {% if user.is_authenticated %}
         {% if user.profile.role == "Writer" %}
-           <a href="{% url 'create_story' %}" class="btn btn-primary"> Create Story </a>
+            <hr>
 
-           <a href="{% url 'my_stories' %}" class="btn btn-outline-primary"> My Stories </a>
+            <a href="{% url 'create_story' %}" class="btn btn-primary">Create Story</a>
+
+            <a href="{% url 'my_stories' %}" class="btn btn-outline-primary">My Stories</a>
         {% endif %}
-
     {% endif %}
 
 </div>
