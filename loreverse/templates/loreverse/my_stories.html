@@ -6,6 +6,7 @@
 
 {% if stories %}
     {% for story in stories %}
+
         <h3>{{ story.title }}</h3>
         <p>{{ story.description }}</p>
 
@@ -16,15 +17,20 @@
         {% endif %}
 
         {% if not story.published %}
-              <form method="post" action="{% url 'publish_story' story.id %}">
-                    {% csrf_token %}
-                    <button type="submit">Publish</button>
-                </form>
+            <form method="post" action="{% url 'publish_story' story.id %}">
+                {% csrf_token %}
+                <button type="submit">Publish</button>
+            </form>
         {% endif %}
-        
+
         <a href="{% url 'edit_story' story.id %}">Edit</a>
+
         <a href="{% url 'delete_story' story.id %}">Delete</a>
+
+        <a href="{% url 'create_chapter' story.id %}">Add Chapter</a>
+
         <hr>
+
     {% endfor %}
 {% else %}
     <p>You haven't created any stories yet.</p>

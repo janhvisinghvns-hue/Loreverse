@@ -1,0 +1,18 @@
+{% extends "loreverse/layout.html" %}
+
+{% block body %}
+
+<h2>Become a Writer</h2>
+
+<p>
+    Become a Writer to create and publish your own stories.
+</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary">
+        Become a Writer
+    </button>
+</form>
+
+{% endblock %}

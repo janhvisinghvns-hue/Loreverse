@@ -4,7 +4,7 @@ from django.contrib.auth import login , authenticate , logout
 from django.db import IntegrityError
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Profile , Story , Chapter
+from .models import Profile , Story , Chapter  , ReadingProgress
 from .forms import ProfileForm , StoryForm , ChapterForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
@@ -12,7 +12,15 @@ from django.contrib.auth import update_session_auth_hash
 
 
 def index(request):
-    return render(request, "loreverse/index.html")
+    progress = None
+    if request.user.is_authenticated:
+        progress = ReadingProgress.objects.filter(
+            user=request.user
+        ).select_related("story", "chapter").first()
+
+    return render(request, "loreverse/index.html", {
+        "progress": progress
+    })
 
 
 def register_view(request):
@@ -89,6 +97,16 @@ def profile_view(request):
         "form": form
     })
 
+@login_required
+def become_writer(request):
+    profile = request.user.profile
+
+    if request.method == "POST":
+        profile.role = "Writer"
+        profile.save()
+        return redirect("profile")
+    return render(request, "loreverse/become_writer.html")
+
 def change_password_view(request):
     if request.method == "POST":
         form = PasswordChangeForm(request.user, request.POST)
@@ -108,6 +126,9 @@ def change_password_view(request):
 
 @login_required
 def create_story(request):
+    if request.user.profile.role != "Writer":
+        return redirect("profile")
+
     if request.method == "POST":
         form = StoryForm(request.POST)
 
@@ -129,26 +150,41 @@ def my_stories(request):
 @login_required
 def edit_story(request, story_id):
     story = get_object_or_404(Story, id=story_id, author=request.user)
+
+    if request.user.profile.role != "Writer":
+        return redirect("profile")
+
     if request.method == "POST":
         form = StoryForm(request.POST, instance=story)
+
         if form.is_valid():
             form.save()
             return redirect("my_stories")
     else:
         form = StoryForm(instance=story)
-    return render(request, "loreverse/edit_story.html", {"form": form, "story": story})
+
+    return render(request, "loreverse/edit_story.html", {
+        "form": form, "story": story
+    })
 
 @login_required
 def delete_story(request, story_id):
     story = get_object_or_404(Story, id=story_id, author=request.user)
+    if request.user.profile.role != "Writer":
+        return redirect("profile")
+
     if request.method == "POST":
         story.delete()
         return redirect("my_stories")
-    return render(request, "loreverse/delete_story.html", {"story": story})
+    return render(request, "loreverse/delete_story.html", {
+        "story": story
+    })
 
 @login_required
 def publish_story(request, story_id):
     story = get_object_or_404(Story, id=story_id, author=request.user)
+    if request.user.profile.role != "Writer":
+        return redirect("profile")
     if request.method == "POST":
         story.published = True
         story.save()
@@ -166,6 +202,10 @@ def story_detail(request, story_id):
 @login_required
 def create_chapter(request, story_id):
     story = get_object_or_404(Story, id=story_id, author=request.user)
+
+    if request.user.profile.role != "Writer":
+        return redirect("profile")
+
     if request.method == "POST":
         form = ChapterForm(request.POST)
 
@@ -178,3 +218,34 @@ def create_chapter(request, story_id):
         form = ChapterForm()
     return render(request, "loreverse/create_chapter.html", {
         "form": form, "story": story})
+
+@login_required
+def read_chapter(request, story_id, chapter_id):
+    story = get_object_or_404(Story, id=story_id, published=True)
+    chapter = get_object_or_404( Chapter, id=chapter_id, story=story)
+
+    chapters = list(story.chapters.all().order_by("chapter_number"))
+    current_index = chapters.index(chapter)
+
+    previous_chapter = None
+    next_chapter = None
+
+    if current_index > 0:
+        previous_chapter = chapters[current_index - 1]
+
+    if current_index < len(chapters) - 1:
+        next_chapter = chapters[current_index + 1]
+
+    if request.user.is_authenticated:
+        ReadingProgress.objects.update_or_create( user=request.user, story=story, defaults={"chapter": chapter})
+
+    return render(request, "loreverse/read_chapter.html", {
+        "story": story, "chapter": chapter,
+        "previous_chapter": previous_chapter, "next_chapter": next_chapter
+    })
+
+@login_required
+def continue_reading(request, story_id):
+    progress = get_object_or_404(ReadingProgress, user=request.user, story_id=story_id)
+
+    return redirect("read_chapter", story_id=progress.story.id, chapter_id=progress.chapter.id)

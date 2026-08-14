@@ -27,4 +27,14 @@ class Chapter(models.Model):
     def __str__(self):
         return f"{self.story.title} - Chapter {self.chapter_number}"    
 
-        
+class ReadingProgress(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    story = models.ForeignKey(Story, on_delete=models.CASCADE)
+    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("user", "story")
+
+    def __str__(self):
+        return f"{self.user.username} - {self.story.title}"       

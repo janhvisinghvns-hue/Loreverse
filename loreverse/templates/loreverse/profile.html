@@ -24,6 +24,9 @@
         </form>
 
         <a class="btn btn-secondary mt-3" href="{% url 'change_password' %}">Change Password</a>
+        {% if profile.role == "Reader" %}
+              <a class="btn btn-success mt-3" href="{% url 'become_writer' %}"> Become a Writer </a>
+        {% endif %}
 
     </div>
 </div>

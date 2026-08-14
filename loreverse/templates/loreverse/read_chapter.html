@@ -1,0 +1,25 @@
+{% extends "loreverse/layout.html" %}
+
+{% block body %}
+
+<h2>{{ story.title }}</h2>
+
+<h3>Chapter {{ chapter.chapter_number }}: {{ chapter.title }}</h3>
+
+<p>{{ chapter.content }}</p>
+
+<hr>
+
+{% if previous_chapter %}
+    <a href="{% url 'read_chapter' story.id previous_chapter.id %}">
+        Previous Chapter
+    </a>
+{% endif %}
+
+{% if next_chapter %}
+    <a href="{% url 'read_chapter' story.id next_chapter.id %}">
+        Next Chapter
+    </a>
+{% endif %}
+
+{% endblock %}

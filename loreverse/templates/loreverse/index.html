@@ -2,6 +2,41 @@
 
 {% block body %}
 
-<h1>Welcome to Loreverse</h1>
+<div class="container mt-5">
+
+    <h1>Welcome to Loreverse</h1>
+
+    <p>Discover and read stories from different worlds.</p>
+
+    <a href="{% url 'published_stories' %}" class="btn btn-primary">Browse Stories</a>
+
+    {% if user.is_authenticated %}
+        {% if progress %}
+            <hr>
+
+            <h3>Continue Reading</h3>
+
+            <p>
+                {{ progress.story.title }}
+                — Chapter {{ progress.chapter.chapter_number }}:
+                {{ progress.chapter.title }}
+            </p>
+
+            <a class="btn btn-success"  href="{% url 'continue_reading' progress.story.id %}"> Continue Reading </a>
+        {% endif %}
+
+        <hr>
+
+        <hr>
+
+        {% if user.profile.role == "Writer" %}
+           <a href="{% url 'create_story' %}" class="btn btn-primary"> Create Story </a>
+
+           <a href="{% url 'my_stories' %}" class="btn btn-outline-primary"> My Stories </a>
+        {% endif %}
+
+    {% endif %}
+
+</div>
 
 {% endblock %}
