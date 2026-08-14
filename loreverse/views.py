@@ -6,9 +6,9 @@ from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import (Profile, Story, Chapter, ReadingProgress, ReadingHistory, 
     CompletedStory, World, Character, Location, Creature,TimelineEvent,WorldImage, CharacterImage,
-    LocationImage,CreatureImage)
+    LocationImage,CreatureImage, ChapterLike, ChapterComment)
 from .forms import( ProfileForm , StoryForm , ChapterForm, CharacterForm,LocationForm, CreatureForm,
-    TimelineEventForm, CreatureImageForm,LocationImageForm,CharacterImageForm,WorldImageForm)
+    TimelineEventForm, CreatureImageForm,LocationImageForm,CharacterImageForm,WorldImageForm, ChapterCommentForm)
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
@@ -436,9 +436,16 @@ def create_chapter(request, story_id):
 @login_required
 def read_chapter(request, story_id, chapter_id):
     story = get_object_or_404(Story, id=story_id, published=True)
-    chapter = get_object_or_404( Chapter, id=chapter_id, story=story)
+    chapter = get_object_or_404(
+        Chapter,
+        id=chapter_id,
+        story=story
+    )
 
-    chapters = list(story.chapters.all().order_by("chapter_number"))
+    chapters = list(
+        story.chapters.all().order_by("chapter_number")
+    )
+
     current_index = chapters.index(chapter)
 
     previous_chapter = None
@@ -450,13 +457,52 @@ def read_chapter(request, story_id, chapter_id):
     if current_index < len(chapters) - 1:
         next_chapter = chapters[current_index + 1]
 
-    if request.user.is_authenticated:
-        ReadingProgress.objects.update_or_create( user=request.user, story=story, defaults={"chapter": chapter})
-        ReadingHistory.objects.update_or_create(user=request.user,story=story)
+    ReadingProgress.objects.update_or_create(
+        user=request.user,
+        story=story,
+        defaults={"chapter": chapter}
+    )
+
+    ReadingHistory.objects.update_or_create(
+        user=request.user,
+        story=story
+    )
+
+    if request.method == "POST":
+        comment_form = ChapterCommentForm(request.POST)
+
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.user = request.user
+            comment.chapter = chapter
+            comment.save()
+
+            return redirect(
+                "read_chapter",
+                story_id=story.id,
+                chapter_id=chapter.id
+            )
+    else:
+        comment_form = ChapterCommentForm()
+
+    likes_count = chapter.likes.count()
+
+    user_liked = ChapterLike.objects.filter(
+        user=request.user,
+        chapter=chapter
+    ).exists()
+
+    comments = chapter.comments.all().order_by("created_at")
 
     return render(request, "loreverse/read_chapter.html", {
-        "story": story, "chapter": chapter,
-        "previous_chapter": previous_chapter, "next_chapter": next_chapter
+        "story": story,
+        "chapter": chapter,
+        "previous_chapter": previous_chapter,
+        "next_chapter": next_chapter,
+        "likes_count": likes_count,
+        "user_liked": user_liked,
+        "comment_form": comment_form,
+        "comments": comments,
     })
 
 @login_required
@@ -606,3 +652,24 @@ def add_creature_image(request, story_id, creature_id):
         "story": story,
         "creature": creature,
     })
+
+@login_required
+def toggle_chapter_like(request, story_id, chapter_id):
+    story = get_object_or_404(Story, id=story_id, published=True)
+    chapter = get_object_or_404(Chapter, id=chapter_id, story=story)
+
+    like = ChapterLike.objects.filter(
+        user=request.user,
+        chapter=chapter
+    ).first()
+
+    if like:
+        like.delete()
+    else:
+        ChapterLike.objects.create(
+            user=request.user,
+            chapter=chapter
+        )
+
+    return redirect(
+        "read_chapter",story_id=story.id,chapter_id=chapter.id)

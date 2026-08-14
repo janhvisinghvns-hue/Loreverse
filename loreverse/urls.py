@@ -27,6 +27,7 @@ urlpatterns = [
     path("stories/<int:story_id>/want-to-read/", views.toggle_want_to_read, name="toggle_want_to_read"),
     path("stories/<int:story_id>/completed/", views.toggle_completed, name="toggle_completed"),
     path("stories/<int:story_id>/chapter/<int:chapter_id>/", views.read_chapter, name="read_chapter"),
+    path("stories/<int:story_id>/chapters/<int:chapter_id>/like/",views.toggle_chapter_like, name="toggle_chapter_like"),
     path("stories/<int:story_id>/continue/", views.continue_reading, name="continue_reading"),
     path("stories/<int:story_id>/create_chapter/", views.create_chapter, name="create_chapter"),
     path("stories/<int:story_id>/world/image/add/", views.add_world_image, name="add_world_image"),

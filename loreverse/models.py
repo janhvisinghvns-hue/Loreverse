@@ -181,4 +181,28 @@ class CompletedStory(models.Model):
         unique_together = ("user", "story")
 
     def __str__(self):
-        return f"{self.user.username} - {self.story.title}"        
+        return f"{self.user.username} - {self.story.title}"      
+
+class ChapterLike(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, related_name="likes")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "chapter")
+
+    def __str__(self):
+        return f"{self.user.username} liked {self.chapter}"
+
+class ChapterComment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    chapter = models.ForeignKey(
+        Chapter,
+        on_delete=models.CASCADE,
+        related_name="comments"
+    )
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.chapter}"          

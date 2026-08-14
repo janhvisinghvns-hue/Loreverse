@@ -8,7 +8,42 @@
 
 <p>{{ chapter.content }}</p>
 
+<div>
+    <form action="{% url 'toggle_chapter_like' story.id chapter.id %}" method="post">
+        {% csrf_token %}
+
+        <button type="submit">
+            {% if user_liked %}
+                Unlike ❤️
+            {% else %}
+                Like 🤍
+            {% endif %}
+        </button>
+
+        <span>{{ likes_count }} likes</span>
+    </form>
+</div>
+
 <hr>
+
+<h4>Comments</h4>
+
+<form method="post">
+    {% csrf_token %}
+
+    {{ comment_form.as_p }}
+
+    <button type="submit">Post Comment</button>
+</form>
+
+{% for comment in comments %}
+    <div>
+        <strong>{{ comment.user.username }}</strong>
+        <p>{{ comment.content }}</p>
+    </div>
+{% empty %}
+    <p>No comments yet.</p>
+{% endfor %}
 
 {% if previous_chapter %}
     <a href="{% url 'read_chapter' story.id previous_chapter.id %}">

@@ -2,7 +2,7 @@ from django import forms
 from .models import (Profile , Story , Chapter , Character ,Location,Creature,TimelineEvent,WorldImage,
     CharacterImage,
     LocationImage,
-    CreatureImage)
+    CreatureImage , ChapterComment)
 
 
 class ProfileForm(forms.ModelForm):
@@ -63,6 +63,18 @@ class CreatureImageForm(forms.ModelForm):
         model = CreatureImage
         fields = ["image"]              
 
-
+class ChapterCommentForm(forms.ModelForm):
+    class Meta:
+        model = ChapterComment
+        fields = ["content"]
+        labels = {
+            "content": "Comment"
+        }
+        widgets = {
+            "content": forms.Textarea(attrs={
+                "rows": 3,
+                "placeholder": "Write a comment..."
+            })
+        }
               
 
