@@ -1,0 +1,21 @@
+{% extends "loreverse/layout.html" %}
+
+{% block body %}
+<h1>Register</h1>
+
+{% if message %}
+    <p>{{ message }}</p>
+{% endif %}
+
+<form action="{% url 'register' %}" method="post">
+    {% csrf_token %}
+
+    <input type="text" name="username" placeholder="Username">
+    <input type="email" name="email" placeholder="Email">
+    <input type="password" name="password" placeholder="Password">
+    <input type="password" name="confirmation" placeholder="Confirm Password">
+
+    <input type="submit" value="Register">
+</form>
+
+{% endblock %}

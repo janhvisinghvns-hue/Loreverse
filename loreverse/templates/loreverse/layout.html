@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Loreverse</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'loreverse/style.css' %}">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary px-3">
+        <a class="navbar-brand" href="{% url 'index' %}">Loreverse</a>
+      <div class="ms-auto">
+        {% if user.is_authenticated %}
+            {% if request.resolver_match.url_name != "profile" %}
+                    <a  class="btn btn-outline-primary me-2" href="{% url 'profile' %}">Profile</a>
+            {% endif %}
+            <a class="btn btn-outline-danger" href="{% url 'logout' %}">Logout</a>        
+        {% else %}
+            <a class="btn btn-outline-primary me-2"  href="{% url 'login' %}">Login</a>
+            <a class="btn btn-primary" href="{% url 'register' %}">Register</a>
+        {% endif %}
+      </div>  
+    </nav>
+    <main>
+       {% block body %}
+       {% endblock %}
+    </main>
+</body>
+</html>

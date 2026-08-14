@@ -1,0 +1,33 @@
+{% extends "loreverse/layout.html" %}
+
+{% block body %}
+
+
+<div class="container mt-4">
+    <div class="card p-4">
+
+        <h1 class="mb-4">Profile</h1>
+
+        {% if profile.profile_picture %}
+            <img src="{{ profile.profile_picture.url }}" alt="Profile picture" width="150" class="rounded-circle mb-3">
+        {% endif %}
+
+        <p><strong>Username:</strong> {{ profile.user.username }}</p>
+        <p><strong>Role:</strong> {{ profile.role }}</p>
+        <p><strong>Bio:</strong> {{ profile.bio }}</p>
+
+        <form method="post" enctype="multipart/form-data" id="profile-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <button type="submit" class="btn btn-primary"> Save Profile </button>
+        </form>
+
+        <a class="btn btn-secondary mt-3" href="{% url 'change_password' %}">Change Password</a>
+
+    </div>
+</div>
+
+
+
+{% endblock %}

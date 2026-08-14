@@ -1,0 +1,20 @@
+{% extends "loreverse/layout.html" %}
+
+{% block body %}
+
+<h2>Published Stories</h2>
+
+{% if stories %}
+    {% for story in stories %}
+        <h3> <a href="{% url 'story_detail' story.id %}"> {{ story.title }} </a></h3>
+
+        <p>{{ story.description }}</p>
+        <p>Written by {{ story.author.username }}</p>
+
+        <hr>
+    {% endfor %}
+{% else %}
+    <p>No published stories yet.</p>
+{% endif %}
+
+{% endblock %}

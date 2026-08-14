@@ -1,0 +1,15 @@
+{% extends "loreverse/layout.html" %}
+
+{% block body %}
+
+<h2>Add Chapter to {{ story.title }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">Add Chapter</button>
+</form>
+
+{% endblock %}

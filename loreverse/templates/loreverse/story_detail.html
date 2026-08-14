@@ -1,0 +1,27 @@
+{% extends "loreverse/layout.html" %}
+
+{% block body %}
+
+<h2>{{ story.title }}</h2>
+<p>{{ story.description }}</p>
+<p>Written by {{ story.author.username }}</p>
+
+<h3>Chapters</h3>
+
+{% if chapters %}
+    {% for chapter in chapters %}
+        <p> Chapter {{ chapter.chapter_number }}:
+            {{ chapter.title }}
+        </p>
+    {% endfor %}
+{% else %}
+    <p>No chapters yet.</p>
+{% endif %}
+
+{% if user == story.author %}
+    <a href="{% url 'create_chapter' story.id %}">
+        Add Chapter
+    </a>
+{% endif %}
+
+{% endblock %}
