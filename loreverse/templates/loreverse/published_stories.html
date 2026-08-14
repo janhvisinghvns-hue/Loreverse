@@ -2,61 +2,128 @@
 
 {% block body %}
 
-<h2>Published Stories</h2>
+<div class="container py-5">
 
-<form method="get">
+    <div class="mb-4">
+        <h1 class="fw-bold">Published Stories</h1>
+        <p class="text-muted">
+            Explore stories from different worlds and genres.
+        </p>
+    </div>
 
-    <select name="genre">
-        <option value="">All Genres</option>
 
-        {% for value, label in genre_choices %}
-            <option value="{{ value }}"
-                {% if genre == value %}selected{% endif %}>
-                {{ label }}
-            </option>
-        {% endfor %}
-    </select>
+    <div class="card border-0 shadow-sm mb-5 filter-card">
+        <div class="card-body p-4">
 
-    <input type="text" name="tag" placeholder="Search by tag..." value="{{ tag }}">
+            <form method="get">
 
-    <select name="sort">
-        <option value="">Default</option>
-        <option value="newest"
-            {% if sort == "newest" %}selected{% endif %}>
-            Newest
-        </option>
-        <option value="oldest"
-           {% if sort == "oldest" %}selected{% endif %}>
-            Oldest
-         </option>
+                <div class="row g-3 align-items-end">
 
-    </select>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">
+                            Genre
+                        </label>
 
-    <button type="submit">Apply Filters</button>
+                        <select class="form-select" name="genre">
 
-</form>
+                            <option value="">All Genres</option>
 
-<br>
+                            {% for value, label in genre_choices %}
+                                <option value="{{ value }}"
+                                    {% if genre == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
 
-{% if stories %}
-    {% for story in stories %}
+                        </select>
+                    </div>
 
-        <h3>
-            <a href="{% url 'story_detail' story.id %}">
-                {{ story.title }}
-            </a>
-        </h3>
 
-        <p>{{ story.description }}</p>
-        <p>Genre: {{ story.get_genre_display }}</p>
-        <p>Tags: {{ story.tags }}</p>
-        <p>Written by {{ story.author.username }}</p>
+                    <div class="col-md-4">
 
-        <hr>
+                        <label class="form-label fw-semibold">Tag</label>
 
-    {% endfor %}
-{% else %}
-    <p>No stories found.</p>
-{% endif %}
+                        <input type="text"
+                               class="form-control"
+                               name="tag"
+                               placeholder="Search by tag..."
+                               value="{{ tag }}">
+                    </div>
+
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Sort By</label>
+                        <select class="form-select" name="sort">
+                            <option value="">Default</option>
+
+                            <option value="newest"
+                                {% if sort == "newest" %}selected{% endif %}>
+                                Newest
+                            </option>
+
+                            <option value="oldest"
+                                {% if sort == "oldest" %}selected{% endif %}>
+                                Oldest
+                            </option>
+                        </select>
+
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    {% if stories %}
+        <div class="row g-4">
+
+            {% for story in stories %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm story-card">
+                        <div class="card-body d-flex flex-column">
+                            <h3 class="card-title fw-bold">
+                                <a href="{% url 'story_detail' story.id %}" class="text-decoration-none">{{ story.title }}</a>
+
+                            </h3>
+                            <p class="text-muted">{{ story.description }}</p>
+
+                            <div class="mt-auto">
+                                <p class="small mb-1">
+                                    <strong>Genre:</strong>
+                                    {{ story.get_genre_display }}
+                                </p>
+
+                                <p class="small mb-1">
+                                    <strong>Tags:</strong>
+                                    {{ story.tags }}
+                                </p>
+
+                                <p class="small text-muted mb-0">
+                                    Written by {{ story.author.username }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            {% endfor %}
+        </div>
+
+    {% else %}
+
+        <div class="text-center py-5">
+            <h4 class="fw-semibold">No stories found</h4>
+
+            <p class="text-muted">
+                Try changing your filters or search for something else.
+            </p>
+        </div>
+
+    {% endif %}
+
+</div>
 
 {% endblock %}

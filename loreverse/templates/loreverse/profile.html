@@ -2,35 +2,85 @@
 
 {% block body %}
 
+<div class="container py-5">
+    <div class="profile-page">
+        <div class="profile-header">
+            {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture.url }}" alt="Profile picture" class="profile-picture">
+            {% else %}
+                <div class="profile-placeholder">
+                    {{ profile.user.username|first|upper }}
+                </div>
+            {% endif %}
 
-<div class="container mt-4">
-    <div class="card p-4">
+            <div class="profile-heading">
+                <p class="text-muted text-uppercase small fw-semibold mb-1">
+                    Loreverse Profile
+                </p>
+                <h1>{{ profile.user.username }}</h1>
+                <span class="badge
+                    {% if profile.role == 'Writer' %}
+                        text-bg-primary
+                    {% else %}
+                        text-bg-secondary
+                    {% endif %}">
+                    {{ profile.role }}
+                </span>
+            </div>
+        </div>
 
-        <h1 class="mb-4">Profile</h1>
+        <div class="profile-info-card">
+            <div class="profile-info-row">
+                <span>Username</span>
+                <strong>
+                    {{ profile.user.username }}
+                </strong>
+            </div>
 
-        {% if profile.profile_picture %}
-            <img src="{{ profile.profile_picture.url }}" alt="Profile picture" width="150" class="rounded-circle mb-3">
-        {% endif %}
+            <div class="profile-info-row">
+                <span>Role</span>
+                <strong>
+                    {{ profile.role }}
+                </strong>
+            </div>
 
-        <p><strong>Username:</strong> {{ profile.user.username }}</p>
-        <p><strong>Role:</strong> {{ profile.role }}</p>
-        <p><strong>Bio:</strong> {{ profile.bio }}</p>
 
-        <form method="post" enctype="multipart/form-data" id="profile-form">
-            {% csrf_token %}
-            {{ form.as_p }}
+            <div class="profile-info-row">
+                <span>Bio</span>
+                <strong>
+                    {{ profile.bio|default:"No bio added yet." }}
+                </strong>
+            </div>
+        </div>
 
-            <button type="submit" class="btn btn-primary"> Save Profile </button>
-        </form>
+        <div class="profile-form-card">
+            <div class="profile-section-heading">
+                <h2>Edit Profile</h2>
 
-        <a class="btn btn-secondary mt-3" href="{% url 'change_password' %}">Change Password</a>
-        {% if profile.role == "Reader" %}
-              <a class="btn btn-success mt-3" href="{% url 'become_writer' %}"> Become a Writer </a>
-        {% endif %}
+                <p>
+                    Update your profile information and picture.
+                </p>
+            </div>
 
+            <form method="post" enctype="multipart/form-data" id="profile-form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">
+                    Save Profile
+                </button>
+            </form>
+        </div>
+
+
+        <div class="profile-actions">
+
+            <a class="btn btn-outline-secondary" href="{% url 'change_password' %}"> Change Password</a>
+
+            {% if profile.role == "Reader" %}
+                <a class="btn btn-success" href="{% url 'become_writer' %}">Become a Writer</a>
+            {% endif %}
+        </div>
     </div>
 </div>
-
-
 
 {% endblock %}

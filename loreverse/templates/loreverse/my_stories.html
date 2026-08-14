@@ -2,59 +2,104 @@
 
 {% block body %}
 
-<h2>My Stories</h2>
+<div class="container py-5">
 
-{% if stories %}
+    <div class="mb-5">
+        <h1 class="fw-bold">My Stories</h1>
+        <p class="text-muted mb-0">
+            Manage your stories, chapters, worlds, and publishing.
+        </p>
+    </div>
 
-    {% for story in stories %}
 
-        <div>
-            <h3>{{ story.title }}</h3>
+    {% if stories %}
+        <div class="row g-4">
+            {% for story in stories %}
+                <div class="col-lg-6">
+                    <div class="writer-story-card">
+                        <div class="writer-story-header">
+                            <div>
+                                <h2>{{ story.title }}</h2>
 
-            {% if story.published %}
-                <p>Published</p>
-            {% else %}
-                <p>Not Published</p>
-            {% endif %}
+                                {% if story.published %}
+
+                                    <span class="badge text-bg-success">Published</span>
+
+                                {% else %}
+
+                                    <span class="badge text-bg-secondary">Not Published</span>
+
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+                        <div class="writer-story-stats">
+                            <span>❤️ {{ story.total_likes }} Likes</span>
+                            <span>💬 {{ story.total_comments }} Comments</span>
+                        </div>
+
+                        <div class="writer-story-actions">
+                            <a href="{% url 'edit_story' story.id %}"class="btn btn-outline-primary">
+                                Edit
+                            </a>
+
+                            <a href="{% url 'delete_story' story.id %}" class="btn btn-outline-danger">
+                                Delete
+                            </a>
+
+                            <a href="{% url 'create_chapter' story.id %}" class="btn btn-primary">
+                                Add Chapter
+                            </a>
+
+                        </div>
+
+                        <div class="writer-secondary-actions">
+                            {% if story.published %}
+                                <a href="{% url 'story_detail' story.id %}" class="btn btn-outline-secondary">
+                                    View Story
+                                </a>
+                            {% endif %}
+
+
+                            {% if story.world %}
+                                <a href="{% url 'world_explorer' story.id %}" class="btn btn-outline-secondary">
+                                    🌍 Explore World
+                                </a>
+                            {% else %}
+                                <a href="{% url 'create_world' story.id %}"class="btn btn-outline-secondary">
+                                    🌍 Add World
+                                </a>
+                            {% endif %}
+
+                        </div>
+
+                        {% if not story.published %}
+                            <div class="publish-section">
+                                <p>Your story is ready to be shared?</p>
+                                <form action="{% url 'publish_story' story.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success">Publish Story</button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state text-center">
+
+            <h4>No stories yet</h4>
 
             <p>
-                ❤️ {{ story.total_likes }} Likes |
-                💬 {{ story.total_comments }} Comments
+                You have not created any stories yet.
             </p>
-
-            <a href="{% url 'edit_story' story.id %}">Edit</a>
-
-            <a href="{% url 'delete_story' story.id %}">Delete</a>
-
-            <a href="{% url 'create_chapter' story.id %}">Add Chapter</a>
-
-            {% if story.published %}
-                <a href="{% url 'story_detail' story.id %}">View Story</a>
-            {% endif %}
-
-            {% if story.world %}
-                <a href="{% url 'world_explorer' story.id %}">Explore World</a>
-            {% else %}
-                <a href="{% url 'create_world' story.id %}">Add World</a>
-            {% endif %}
-
-            {% if not story.published %}
-                <form action="{% url 'publish_story' story.id %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit">Publish</button>
-                </form>
-            {% endif %}
 
         </div>
 
-        <hr>
+    {% endif %}
 
-    {% endfor %}
-
-{% else %}
-
-    <p>You have not created any stories yet.</p>
-
-{% endif %}
+</div>
 
 {% endblock %}

@@ -2,59 +2,129 @@
 
 {% block body %}
 
-<h2>{{ story.title }}</h2>
+<div class="container py-5">
 
-<h3>Chapter {{ chapter.chapter_number }}: {{ chapter.title }}</h3>
+    <article class="reading-page">
 
-<p>{{ chapter.content }}</p>
+        <header class="reading-header">
 
-<div>
-    <form action="{% url 'toggle_chapter_like' story.id chapter.id %}" method="post">
-        {% csrf_token %}
+            <p class="reading-story-title">
+                {{ story.title }}
+            </p>
 
-        <button type="submit">
-            {% if user_liked %}
-                Unlike ❤️
+            <h1>Chapter {{ chapter.chapter_number }}:
+                {{ chapter.title }}
+            </h1>
+
+        </header>
+
+
+        <div class="chapter-content">
+            {{ chapter.content }}
+        </div>
+
+
+        <div class="chapter-like">
+
+            <form action="{% url 'toggle_chapter_like' story.id chapter.id %}"
+                  method="post">
+
+                {% csrf_token %}
+
+                <button type="submit"
+                        class="btn {% if user_liked %}btn-danger{% else %}btn-outline-danger{% endif %}">
+
+                    {% if user_liked %}
+                        ❤️ Unlike
+                    {% else %}
+                        🤍 Like
+                    {% endif %}
+
+                </button>
+
+                <span class="likes-count">{{ likes_count }} likes</span>
+            </form>
+        </div>
+
+
+        <section class="comments-section">
+
+            <h2>Comments</h2>
+            <p class="text-muted">Share your thoughts about this chapter.</p>
+
+
+            <div class="comment-form card border-0 shadow-sm">
+                <div class="card-body">
+                    <form method="post">
+
+                        {% csrf_token %}
+
+                        {{ comment_form.as_p }}
+
+                        <button type="submit" class="btn btn-primary">
+                            Post Comment
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="comments-list">
+
+                {% for comment in comments %}
+
+                    <div class="comment-item">
+                        <strong>{{ comment.user.username }}</strong>
+                        <p>{{ comment.content }}</p>
+                    </div>
+
+                {% empty %}
+
+                    <div class="empty-state">
+                        <p>No comments yet.</p>
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+        <nav class="chapter-navigation"
+             aria-label="Chapter navigation">
+
+            {% if previous_chapter %}
+
+                <a href="{% url 'read_chapter' story.id previous_chapter.id %}" class="chapter-nav-button">
+                    <span>←</span>
+                    <div>
+                        <small>Previous</small>
+                        <strong>Chapter {{ previous_chapter.chapter_number }}</strong>
+                    </div>
+                </a>
+
             {% else %}
-                Like 🤍
+                <div></div>
             {% endif %}
-        </button>
 
-        <span>{{ likes_count }} likes</span>
-    </form>
+
+            {% if next_chapter %}
+
+                <a href="{% url 'read_chapter' story.id next_chapter.id %}" class="chapter-nav-button text-end">
+                    <div>
+                        <small>Next</small>
+                        <strong>Chapter {{ next_chapter.chapter_number }}</strong>
+                    </div>
+
+                    <span>→</span>
+                </a>
+
+            {% endif %}
+
+        </nav>
+    </article>
+
 </div>
-
-<hr>
-
-<h4>Comments</h4>
-
-<form method="post">
-    {% csrf_token %}
-
-    {{ comment_form.as_p }}
-
-    <button type="submit">Post Comment</button>
-</form>
-
-{% for comment in comments %}
-    <div>
-        <strong>{{ comment.user.username }}</strong>
-        <p>{{ comment.content }}</p>
-    </div>
-{% empty %}
-    <p>No comments yet.</p>
-{% endfor %}
-
-{% if previous_chapter %}
-    <a href="{% url 'read_chapter' story.id previous_chapter.id %}">
-        Previous Chapter
-    </a>
-{% endif %}
-
-{% if next_chapter %}
-    <a href="{% url 'read_chapter' story.id next_chapter.id %}">
-        Next Chapter
-    </a>
-{% endif %}
 
 {% endblock %}

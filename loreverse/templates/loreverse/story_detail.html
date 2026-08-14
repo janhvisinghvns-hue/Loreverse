@@ -2,71 +2,211 @@
 
 {% block body %}
 
-<h2>{{ story.title }}</h2>
-<p>{{ story.description }}</p>
-<p>Written by {{ story.author.username }}</p>
+<div class="container py-5">
 
-{% if user.is_authenticated %}
-    {% if user in story.favorited_by.all %}
-        <form action="{% url 'toggle_favorite' story.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit">⭐ Remove from Favorites</button>
-        </form>
-    {% else %}
-        <form action="{% url 'toggle_favorite' story.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit">⭐ Add to Favorites</button>
-        </form>
-    {% endif %}
-{% endif %}
+    <div class="story-detail-header mb-5">
 
-{% if user.is_authenticated %}
-    {% if user in story.want_to_read_by.all %}
-        <form action="{% url 'toggle_want_to_read' story.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit">🔖 Remove from Want to Read</button>
-        </form>
-    {% else %}
-        <form action="{% url 'toggle_want_to_read' story.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit">🔖 Add to Want to Read</button>
-        </form>
-    {% endif %}
-{% endif %}
+        <p class="text-muted text-uppercase small fw-semibold mb-2">Story</p>
 
-{% if user.is_authenticated %}
-    {% if completed %}
-        <form action="{% url 'toggle_completed' story.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit">↩️ Remove from Completed</button>
-        </form>
-    {% else %}
-        <form action="{% url 'toggle_completed' story.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit">✅ Mark as Completed</button>
-        </form>
-    {% endif %}
-{% endif %}
+        <h1 class="display-5 fw-bold mb-3">{{ story.title }}</h1>
 
-{% if story.world %}
-    <p>
-        <a href="{% url 'world_explorer' story.id %}">🌍 Explore World</a>
-    </p>
-{% endif %}
+        <p class="lead text-muted mb-2">{{ story.description }}</p>
 
-<h3>Chapters</h3>
-
-{% if chapters %}
-    {% for chapter in chapters %}
-        <p>
-            Chapter {{ chapter.chapter_number }}:
-            <a href="{% url 'read_chapter' story.id chapter.id %}">
-                {{ chapter.title }}
-            </a>
+        <p class="text-muted mb-0">
+            Written by <strong>{{ story.author.username }}</strong>
         </p>
-    {% endfor %}
-{% else %}
-    <p>No chapters yet.</p>
-{% endif %}
+
+    </div>
+
+
+    {% if user.is_authenticated %}
+
+        <div class="story-actions card border-0 shadow-sm mb-5">
+
+            <div class="card-body p-4">
+
+                <h5 class="fw-bold mb-3">Your Library</h5>
+
+                <div class="d-flex flex-wrap gap-2">
+
+                    {% if user in story.favorited_by.all %}
+
+                        <form action="{% url 'toggle_favorite' story.id %}" method="post">
+
+                            {% csrf_token %}
+
+                            <button type="submit" class="btn btn-warning"> ⭐ Remove from Favorites</button>
+
+                        </form>
+
+                    {% else %}
+
+                        <form action="{% url 'toggle_favorite' story.id %}" method="post">
+
+                            {% csrf_token %}
+
+                            <button type="submit" class="btn btn-outline-warning">
+                                ⭐ Add to Favorites
+                            </button>
+
+                        </form>
+
+                    {% endif %}
+
+
+                    {% if user in story.want_to_read_by.all %}
+
+                        <form action="{% url 'toggle_want_to_read' story.id %}" method="post">
+
+                            {% csrf_token %}
+
+                            <button type="submit" class="btn btn-info">
+                                 Remove from Want to Read
+                            </button>
+
+                        </form>
+
+                    {% else %}
+
+                        <form action="{% url 'toggle_want_to_read' story.id %}" method="post">
+
+                            {% csrf_token %}
+
+                            <button type="submit" class="btn btn-outline-info">
+                                 Add to Want to Read
+                            </button>
+
+                        </form>
+
+                    {% endif %}
+
+
+                    {% if completed %}
+
+                        <form action="{% url 'toggle_completed' story.id %}" method="post">
+
+                            {% csrf_token %}
+
+                            <button type="submit" class="btn btn-success">
+                                 Remove from Completed
+                            </button>
+
+                        </form>
+
+                    {% else %}
+
+                        <form action="{% url 'toggle_completed' story.id %}" method="post">
+
+                            {% csrf_token %}
+
+                            <button type="submit" class="btn btn-outline-success">
+                                ✅ Mark as Completed
+                            </button>
+
+                        </form>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+    {% if story.world %}
+
+        <div class="card border-0 shadow-sm mb-5 world-explorer-card">
+
+            <div class="card-body p-4">
+
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                    <div>
+
+                        <h3 class="fw-bold mb-1">Explore the World</h3>
+
+                        <p class="text-muted mb-0">
+                            Discover the characters, places, creatures,
+                            and history behind this story.
+                        </p>
+
+                    </div>
+
+                    <a href="{% url 'world_explorer' story.id %}" class="btn btn-primary">
+                        🌍 Explore World
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+    <section>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <div>
+
+                <h2 class="fw-bold mb-1">Chapters</h2>
+
+                <p class="text-muted mb-0">
+                    Continue your journey through the story.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        {% if chapters %}
+
+            <div class="chapter-list">
+
+                {% for chapter in chapters %}
+
+                    <a href="{% url 'read_chapter' story.id chapter.id %}"class="chapter-item">
+
+                        <div>
+
+                            <span class="small text-muted">
+                                Chapter {{ chapter.chapter_number }}
+                            </span>
+
+                            <h5 class="mb-0 fw-semibold">{{ chapter.title }}</h5>
+
+                        </div>
+
+                        <span class="chapter-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="text-center py-5">
+
+                <h4 class="fw-semibold">No chapters yet</h4>
+
+                <p class="text-muted mb-0">
+                    This story hasn't added any chapters yet.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
 
 {% endblock %}

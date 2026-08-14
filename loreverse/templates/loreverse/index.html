@@ -2,91 +2,160 @@
 
 {% block body %}
 
-<div class="container mt-5">
+<div class="container py-5">
 
-    <h1>Welcome to Loreverse</h1>
+    
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">Welcome to Loreverse</h1>
 
-    <p>Discover and read stories from different worlds.</p>
+        <p class="lead text-muted">
+            Discover stories, explore worlds, and continue your journey.
+        </p>
 
+        <a href="{% url 'published_stories' %}" class="btn btn-primary btn-lg mt-2">Browse Stories</a>
+    </div>
+
+
+   
     {% if user.is_authenticated %}
         {% if progress %}
-            <hr>
 
-            <h3>Continue Reading</h3>
+            <div  class="card shadow-sm continue-reading-card mb-5">
+                <div class="card-body p-4">
 
-            <p>
-                {{ progress.story.title }}
-                — Chapter {{ progress.chapter.chapter_number }}:
-                {{ progress.chapter.title }}
-            </p>
+                    <p class="continue-reading-label mb-1">Continue Reading</p>
 
-            <a class="btn btn-success" href="{% url 'continue_reading' progress.story.id %}">Continue Reading</a>
+                    <h3 class="continue-reading-title">{{ progress.story.title }}</h3>
+
+                    <p class="continue-reading-chapter">
+                        Chapter {{ progress.chapter.chapter_number }}:
+                        {{ progress.chapter.title }}
+                    </p>
+
+                    <a class="btn btn-success" href="{% url 'continue_reading' progress.story.id %}">
+                        Continue Reading
+                    </a>
+                </div>
+            </div>
+
         {% endif %}
     {% endif %}
 
 
-    <hr>
+    
+    <section class="mb-5">
 
-    <h3>Fantasy</h3>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="fw-bold mb-0">Fantasy</h2>
+        </div>
 
-    {% if fantasy_stories %}
-        {% for story in fantasy_stories %}
-            <h4>
-                <a href="{% url 'story_detail' story.id %}">{{ story.title }}</a>
-            </h4>
+        {% if fantasy_stories %}
+            <div class="row g-4">
+                {% for story in fantasy_stories %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm border-0 story-card">
+                            <div class="card-body">
+                                <h4 class="card-title">
+                                    <a href="{% url 'story_detail' story.id %}"class="text-decoration-none">
+                                        {{ story.title }}
+                                    </a>
+                                </h4>
 
-            <p>Written by {{ story.author.username }}</p>
-        {% endfor %}
-    {% else %}
-        <p>No Fantasy stories yet.</p>
-    {% endif %}
+                                <p class="text-muted mb-0">
+                                    Written by {{ story.author.username }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+        {% else %}
+            <p class="text-muted">No Fantasy stories yet.</p>
+        {% endif %}
+
+    </section>
+
+
+    <section class="mb-5">
+
+        <h2 class="fw-bold mb-3">Mystery</h2>
+        {% if mystery_stories %}
+            <div class="row g-4">
+
+                {% for story in mystery_stories %}
+
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm border-0 story-card">
+                            <div class="card-body">
+                                <h4 class="card-title">
+                                    <a href="{% url 'story_detail' story.id %}" class="text-decoration-none">
+                                        {{ story.title }}
+                                    </a>
+                                </h4>
+
+                                <p class="text-muted mb-0">
+                                    Written by {{ story.author.username }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+        {% else %}
+
+            <p class="text-muted">No Mystery stories yet.</p>
+
+        {% endif %}
+
+    </section>
+
 
     
-    <hr>
+    <section class="mb-5">
 
-    <h3>Mystery</h3>
+        <h2 class="fw-bold mb-3">Adventure</h2>
+        {% if adventure_stories %}
+            <div class="row g-4">
+                {% for story in adventure_stories %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm border-0 story-card">
+                            <div class="card-body">
+                                <h4 class="card-title">
+                                    <a href="{% url 'story_detail' story.id %}" class="text-decoration-none">
+                                        {{ story.title }}
+                                    </a>
+                                </h4>
 
-    {% if mystery_stories %}
-        {% for story in mystery_stories %}
-            <h4>
-                <a href="{% url 'story_detail' story.id %}">{{ story.title }}</a>
-            </h4>
+                                <p class="text-muted mb-0">
+                                    Written by {{ story.author.username }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
 
-            <p>Written by {{ story.author.username }}</p>
-        {% endfor %}
-    {% else %}
-        <p>No Mystery stories yet.</p>
-    {% endif %}
+        {% else %}
+            <p class="text-muted">No Adventure stories yet.</p>
+        {% endif %}
 
-    <hr>
+    </section>
 
-    <h3>Adventure</h3>
-
-    {% if adventure_stories %}
-        {% for story in adventure_stories %}
-            <h4>
-                <a href="{% url 'story_detail' story.id %}">{{ story.title }}</a>
-            </h4>
-
-            <p>Written by {{ story.author.username }}</p>
-        {% endfor %}
-    {% else %}
-        <p>No Adventure stories yet.</p>
-    {% endif %}
-
-    <hr>
 
     
-    <a href="{% url 'published_stories' %}" class="btn btn-primary">Browse All Stories</a>
-
-   
     {% if user.is_authenticated %}
         {% if user.profile.role == "Writer" %}
-            <hr>
 
-            <a href="{% url 'create_story' %}" class="btn btn-primary">Create Story</a>
+            <div class="border-top pt-4 mt-5">
 
-            <a href="{% url 'my_stories' %}" class="btn btn-outline-primary">My Stories</a>
+                <h3 class="fw-bold mb-3">Writer Tools</h3>
+                <a href="{% url 'create_story' %}"class="btn btn-primary me-2">Create Story</a>
+                <a href="{% url 'my_stories' %}" class="btn btn-outline-primary">My Stories</a>
+
+            </div>
+
         {% endif %}
     {% endif %}
 

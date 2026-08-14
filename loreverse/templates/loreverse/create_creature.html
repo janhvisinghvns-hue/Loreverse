@@ -2,16 +2,34 @@
 
 {% block body %}
 
-<h2>Add Creature to {{ story.title }}</h2>
+<div class="container py-5">
+    <div class="form-page">
+        <div class="form-page-header">
+            <p class="text-muted text-uppercase small fw-semibold mb-2">
+                {{ story.title }} · World Explorer
+            </p>
+            <h1 class="fw-bold">Add Creature</h1>
+            <p class="text-muted">
+                Add a creature that inhabits this world.
+            </p>
+        </div>
 
-<form method="post">
-    {% csrf_token %}
+        <div class="form-card">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="form-actions">
+                    <button type="submit"class="btn btn-primary">
+                        Add Creature
+                    </button>
 
-    {{ form.as_p }}
-
-    <button type="submit">Add Creature</button>
-</form>
-
-<a href="{% url 'world_explorer' story.id %}">Back to World Explorer</a>
+                    <a href="{% url 'world_explorer' story.id %}" class="btn btn-outline-secondary ms-2">
+                        Back to World Explorer
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

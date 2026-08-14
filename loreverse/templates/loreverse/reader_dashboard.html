@@ -2,82 +2,162 @@
 
 {% block body %}
 
-<h2>Reader Dashboard</h2>
+<div class="container py-5">
 
-<h3>📖 Continue Reading</h3>
-
-{% if progress %}
-    {% for item in progress %}
-        <p>
-            <a href="{% url 'continue_reading' item.story.id %}">
-                {{ item.story.title }}
-            </a>
-            — Chapter {{ item.chapter.chapter_number }}: {{ item.chapter.title }}
+    <div class="mb-5">
+        <h1 class="fw-bold">Reader Dashboard</h1>
+        <p class="text-muted mb-0">
+            Keep track of your stories, reading progress, and library.
         </p>
-    {% endfor %}
-{% else %}
-    <p>You are not currently reading any stories.</p>
-{% endif %}
+    </div>
+
+    <section class="dashboard-section">
+
+        <div class="section-heading">
+            <h2>📖 Continue Reading</h2>
+            <p>Pick up where you left off.</p>
+        </div>
+
+        {% if progress %}
+            <div class="row g-3">
+                {% for item in progress %}
+                    <div class="col-md-6">
+                        <a href="{% url 'continue_reading' item.story.id %}" class="dashboard-story-card">
+                            <div>
+                                <span class="small text-muted">
+                                    Chapter {{ item.chapter.chapter_number }}
+                                </span>
+
+                                <h4>{{ item.story.title }}</h4>
+
+                                <p>{{ item.chapter.title }}</p>
+                            </div>
+                            <span class="dashboard-arrow">→</span>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+
+        {% else %}
+            <div class="empty-state">
+                <p>You are not currently reading any stories.</p>
+            </div>
+        {% endif %}
+
+    </section>
 
 
-<h3>⭐ Favorites</h3>
+    <section class="dashboard-section">
+        <div class="section-heading">
+            <h2>⭐ Favorites</h2>
+            <p>Stories you've saved as favorites.</p>
+        </div>
 
-{% if favorites %}
-    {% for story in favorites %}
-        <p>
-            <a href="{% url 'story_detail' story.id %}">
-                {{ story.title }}
-            </a>
-        </p>
-    {% endfor %}
-{% else %}
-    <p>No favorite stories yet.</p>
-{% endif %}
+        {% if favorites %}
+            <div class="row g-3">
+                {% for story in favorites %}
+                    <div class="col-md-6 col-lg-4">
+                        <a href="{% url 'story_detail' story.id %}" class="dashboard-list-card">
+                            <span>{{ story.title }}</span>
+                            <span>→</span>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
 
+        {% else %}
+            <div class="empty-state">
+                <p>No favorite stories yet.</p>
+            </div>
+        {% endif %}
 
-<h3>🔖 Want to Read</h3>
-
-{% if want_to_read %}
-    {% for story in want_to_read %}
-        <p>
-            <a href="{% url 'story_detail' story.id %}">
-                {{ story.title }}
-            </a>
-        </p>
-    {% endfor %}
-{% else %}
-    <p>No stories in your Want to Read list.</p>
-{% endif %}
+    </section>
 
 
-<h3>✅ Completed Stories</h3>
+    <section class="dashboard-section">
+        <div class="section-heading">
+            <h2>🔖 Want to Read</h2>
+            <p>Stories you've saved for later.</p>
+        </div>
 
-{% if completed_stories %}
-    {% for item in completed_stories %}
-        <p>
-            <a href="{% url 'story_detail' item.story.id %}">
-                {{ item.story.title }}
-            </a>
-        </p>
-    {% endfor %}
-{% else %}
-    <p>No completed stories yet.</p>
-{% endif %}
+        {% if want_to_read %}
+            <div class="row g-3">
+                {% for story in want_to_read %}
+                    <div class="col-md-6 col-lg-4">
+                        <a href="{% url 'story_detail' story.id %}" class="dashboard-list-card">
+                            <span>{{ story.title }}</span>
+                            <span>→</span>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+
+        {% else %}
+            <div class="empty-state">
+                <p>No stories in your Want to Read list.</p>
+            </div>
+        {% endif %}
+
+    </section>
 
 
-<h3>🕘 Reading History</h3>
+    <section class="dashboard-section">
+        <div class="section-heading">
+            <h2>✅ Completed Stories</h2>
+            <p>Stories you've finished reading.</p>
+        </div>
 
-{% if reading_history %}
-    {% for item in reading_history %}
-        <p>
-            <a href="{% url 'story_detail' item.story.id %}">
-                {{ item.story.title }}
-            </a>
-            — Last read {{ item.last_read_at }}
-        </p>
-    {% endfor %}
-{% else %}
-    <p>Your reading history is empty.</p>
-{% endif %}
+        {% if completed_stories %}
+            <div class="row g-3">
+                {% for item in completed_stories %}
+                    <div class="col-md-6 col-lg-4">
+                        <a href="{% url 'story_detail' item.story.id %}" class="dashboard-list-card">
+                            <span>{{ item.story.title }}</span>
+                            <span>→</span>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+
+        {% else %}
+            <div class="empty-state">
+                <p>No completed stories yet.</p>
+            </div>
+        {% endif %}
+    </section>
+
+
+    <section class="dashboard-section">
+
+        <div class="section-heading">
+            <h2>🕘 Reading History</h2>
+            <p>Stories you've recently read.</p>
+        </div>
+
+        {% if reading_history %}
+
+            <div class="reading-history">
+
+                {% for item in reading_history %}
+                    <a href="{% url 'story_detail' item.story.id %}" class="history-item">
+                        <div>
+                            <strong>{{ item.story.title }}</strong>
+                            <span>Last read {{ item.last_read_at }}</span>
+                        </div>
+                        <span>→</span>
+                    </a>
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+            <div class="empty-state">
+                <p>Your reading history is empty.</p>
+            </div>
+        {% endif %}
+
+    </section>
+
+</div>
 
 {% endblock %}

@@ -2,14 +2,30 @@
 
 {% block body %}
 
-<h2>Add Chapter to {{ story.title }}</h2>
+<div class="container py-5">
+    <div class="form-page">
+        <div class="form-page-header">
+            <p class="text-muted text-uppercase small fw-semibold mb-2">
+                {{ story.title }}
+            </p>
+            <h1 class="fw-bold">Add Chapter</h1>
+            <p class="text-muted">
+                Continue building your story with a new chapter.
+            </p>
+        </div>
 
-<form method="post">
-    {% csrf_token %}
-
-    {{ form.as_p }}
-
-    <button type="submit">Add Chapter</button>
-</form>
+        <div class="form-card">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        Add Chapter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

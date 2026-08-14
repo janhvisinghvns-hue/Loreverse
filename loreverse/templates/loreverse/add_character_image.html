@@ -1,19 +1,35 @@
 {% extends "loreverse/layout.html" %}
 
 {% block body %}
+<div class="container py-5">
 
-<h2>Add Image for {{ character.name }}</h2>
+    <div class="form-page">
+        <div class="form-page-header">
+            <p class="text-muted text-uppercase small fw-semibold mb-2">
+                {{ story.title }} · World Explorer
+            </p>
+            <h1 class="fw-bold">Add Character Image</h1>
+            <p class="text-muted">
+                Add an image representing {{ character.name }}.
+            </p>
+        </div>
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
+        <div class="form-card">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="form-actions">
 
-    {{ form.as_p }}
-
-    <button type="submit">Add Image</button>
-</form>
-
-<a href="{% url 'world_explorer' story.id %}">
-    Back to World Explorer
-</a>
+                    <button type="submit" class="btn btn-primary">
+                        Add Image
+                    </button>
+                    <a href="{% url 'world_explorer' story.id %}" class="btn btn-outline-secondary ms-2">
+                        Back to World Explorer
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

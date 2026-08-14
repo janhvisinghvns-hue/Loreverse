@@ -2,12 +2,32 @@
 
 {% block body %}
 
-<h2>Create Story</h2>
+<div class="container py-5">
+    <div class="form-page">
+        <div class="form-page-header">
+            <p class="text-muted text-uppercase small fw-semibold mb-2">
+                Writer Tools
+            </p>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create Story</button>
-</form>
+            <h1 class="fw-bold">Create Story</h1>
+
+            <p class="text-muted">
+                Bring a new world and story to life.
+            </p>
+        </div>
+
+        <div class="form-card">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        Create Story
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

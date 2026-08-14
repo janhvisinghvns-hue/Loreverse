@@ -2,18 +2,33 @@
 
 {% block body %}
 
-<h2>Add Image for {{ location.name }}</h2>
+<div class="container py-5">
+    <div class="form-page">
+        <div class="form-page-header">
+            <p class="text-muted text-uppercase small fw-semibold mb-2">
+                {{ story.title }} · World Explorer
+            </p>
+            <h1 class="fw-bold">Add Location Image</h1>
+            <p class="text-muted">
+                Add an image representing {{ location.name }}.
+            </p>
+        </div>
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-
-    {{ form.as_p }}
-
-    <button type="submit">Add Image</button>
-</form>
-
-<a href="{% url 'world_explorer' story.id %}">
-    Back to World Explorer
-</a>
+        <div class="form-card">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        Add Image
+                    </button>
+                    <a href="{% url 'world_explorer' story.id %}" class="btn btn-outline-secondary ms-2">
+                        Back to World Explorer
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
