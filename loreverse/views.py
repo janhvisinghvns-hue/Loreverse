@@ -4,7 +4,7 @@ from django.contrib.auth import login , authenticate , logout
 from django.db import IntegrityError
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Profile , Story , Chapter  , ReadingProgress
+from .models import Profile , Story , Chapter  , ReadingProgress ,ReadingHistory , CompletedStory
 from .forms import ProfileForm , StoryForm , ChapterForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
@@ -197,7 +197,46 @@ def published_stories(request):
 def story_detail(request, story_id):
     story = get_object_or_404(Story, id=story_id, published=True)
     chapters = story.chapters.all().order_by("chapter_number")
-    return render(request, "loreverse/story_detail.html", {"story": story, "chapters": chapters})
+    completed = False
+
+    if request.user.is_authenticated:
+        completed = CompletedStory.objects.filter(
+            user=request.user,
+            story=story
+        ).exists()
+    return render(request, "loreverse/story_detail.html", {"story": story, "chapters": chapters , "completed": completed})
+
+@login_required
+def toggle_favorite(request, story_id):
+    story = get_object_or_404(Story, id=story_id, published=True)
+    if request.user in story.favorited_by.all():
+        story.favorited_by.remove(request.user)
+    else:
+        story.favorited_by.add(request.user)
+    return redirect("story_detail", story_id=story.id)
+
+@login_required
+def toggle_want_to_read(request, story_id):
+    story = get_object_or_404(Story, id=story_id, published=True)
+
+    if request.user in story.want_to_read_by.all():
+        story.want_to_read_by.remove(request.user)
+    else:
+        story.want_to_read_by.add(request.user)
+    return redirect("story_detail", story_id=story.id)
+
+@login_required
+def toggle_completed(request, story_id):
+    story = get_object_or_404(Story, id=story_id, published=True)
+
+    completed = CompletedStory.objects.filter(user=request.user, story=story).first()
+
+    if completed:
+        completed.delete()
+    else:
+        CompletedStory.objects.create(user=request.user, story=story)
+
+    return redirect("story_detail", story_id=story.id)
 
 @login_required
 def create_chapter(request, story_id):
@@ -238,6 +277,7 @@ def read_chapter(request, story_id, chapter_id):
 
     if request.user.is_authenticated:
         ReadingProgress.objects.update_or_create( user=request.user, story=story, defaults={"chapter": chapter})
+        ReadingHistory.objects.update_or_create(user=request.user,story=story)
 
     return render(request, "loreverse/read_chapter.html", {
         "story": story, "chapter": chapter,
@@ -249,3 +289,30 @@ def continue_reading(request, story_id):
     progress = get_object_or_404(ReadingProgress, user=request.user, story_id=story_id)
 
     return redirect("read_chapter", story_id=progress.story.id, chapter_id=progress.chapter.id)
+
+
+@login_required
+def reader_dashboard(request):
+    progress = ReadingProgress.objects.filter(
+        user=request.user
+    ).select_related("story", "chapter")
+
+    favorites = request.user.favorite_stories.all()
+
+    want_to_read = request.user.want_to_read_stories.all()
+
+    completed_stories = CompletedStory.objects.filter(
+        user=request.user
+    ).select_related("story")
+
+    reading_history = ReadingHistory.objects.filter(
+        user=request.user
+    ).select_related("story").order_by("-last_read_at")
+
+    return render(request, "loreverse/reader_dashboard.html", {
+        "progress": progress,
+        "favorites": favorites,
+        "want_to_read": want_to_read,
+        "completed_stories": completed_stories,
+        "reading_history": reading_history,
+    })

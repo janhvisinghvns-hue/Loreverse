@@ -6,6 +6,48 @@
 <p>{{ story.description }}</p>
 <p>Written by {{ story.author.username }}</p>
 
+{% if user.is_authenticated %}
+    {% if user in story.favorited_by.all %}
+        <form action="{% url 'toggle_favorite' story.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit">⭐ Remove from Favorites</button>
+        </form>
+    {% else %}
+        <form action="{% url 'toggle_favorite' story.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit">⭐ Add to Favorites</button>
+        </form>
+    {% endif %}
+{% endif %}
+
+{% if user.is_authenticated %}
+    {% if user in story.want_to_read_by.all %}
+        <form action="{% url 'toggle_want_to_read' story.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit">🔖 Remove from Want to Read</button>
+        </form>
+    {% else %}
+        <form action="{% url 'toggle_want_to_read' story.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit">🔖 Add to Want to Read</button>
+        </form>
+    {% endif %}
+{% endif %}
+
+{% if user.is_authenticated %}
+    {% if completed %}
+        <form action="{% url 'toggle_completed' story.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit">↩️ Remove from Completed</button>
+        </form>
+    {% else %}
+        <form action="{% url 'toggle_completed' story.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit">✅ Mark as Completed</button>
+        </form>
+    {% endif %}
+{% endif %}
+
 <h3>Chapters</h3>
 
 {% if chapters %}

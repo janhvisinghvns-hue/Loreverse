@@ -1,0 +1,83 @@
+{% extends "loreverse/layout.html" %}
+
+{% block body %}
+
+<h2>Reader Dashboard</h2>
+
+<h3>📖 Continue Reading</h3>
+
+{% if progress %}
+    {% for item in progress %}
+        <p>
+            <a href="{% url 'continue_reading' item.story.id %}">
+                {{ item.story.title }}
+            </a>
+            — Chapter {{ item.chapter.chapter_number }}: {{ item.chapter.title }}
+        </p>
+    {% endfor %}
+{% else %}
+    <p>You are not currently reading any stories.</p>
+{% endif %}
+
+
+<h3>⭐ Favorites</h3>
+
+{% if favorites %}
+    {% for story in favorites %}
+        <p>
+            <a href="{% url 'story_detail' story.id %}">
+                {{ story.title }}
+            </a>
+        </p>
+    {% endfor %}
+{% else %}
+    <p>No favorite stories yet.</p>
+{% endif %}
+
+
+<h3>🔖 Want to Read</h3>
+
+{% if want_to_read %}
+    {% for story in want_to_read %}
+        <p>
+            <a href="{% url 'story_detail' story.id %}">
+                {{ story.title }}
+            </a>
+        </p>
+    {% endfor %}
+{% else %}
+    <p>No stories in your Want to Read list.</p>
+{% endif %}
+
+
+<h3>✅ Completed Stories</h3>
+
+{% if completed_stories %}
+    {% for item in completed_stories %}
+        <p>
+            <a href="{% url 'story_detail' item.story.id %}">
+                {{ item.story.title }}
+            </a>
+        </p>
+    {% endfor %}
+{% else %}
+    <p>No completed stories yet.</p>
+{% endif %}
+
+
+<h3>🕘 Reading History</h3>
+
+{% if reading_history %}
+    {% for item in reading_history %}
+        <p>
+            <a href="{% url 'story_detail' item.story.id %}">
+                {{ item.story.title }}
+            </a>
+            — Last read {{ item.last_read_at }}
+        </p>
+    {% endfor %}
+{% else %}
+    <p>Your reading history is empty.</p>
+{% endif %}
+
+{% endblock %}

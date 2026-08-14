@@ -14,6 +14,8 @@ class Story(models.Model):
     published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    favorited_by = models.ManyToManyField(User, related_name="favorite_stories", blank=True)
+    want_to_read_by = models.ManyToManyField(User, related_name="want_to_read_stories", blank=True)
 
     def __str__(self):
         return self.title
@@ -38,3 +40,25 @@ class ReadingProgress(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.story.title}"       
+
+class ReadingHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    story = models.ForeignKey(Story, on_delete=models.CASCADE)
+    last_read_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("user", "story")
+
+    def __str__(self):
+        return f"{self.user.username} - {self.story.title}"
+
+class CompletedStory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    story = models.ForeignKey(Story, on_delete=models.CASCADE)
+    completed_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("user", "story")
+
+    def __str__(self):
+        return f"{self.user.username} - {self.story.title}"        
