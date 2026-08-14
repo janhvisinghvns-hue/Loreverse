@@ -1,0 +1,17 @@
+{% extends "loreverse/layout.html" %}
+
+{% block body %}
+
+<h2>Add Location to {{ story.title }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">Add Location</button>
+</form>
+
+<a href="{% url 'world_explorer' story.id %}">Back to World Explorer</a>
+
+{% endblock %}

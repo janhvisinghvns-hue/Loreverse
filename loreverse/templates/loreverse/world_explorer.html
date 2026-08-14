@@ -1,0 +1,148 @@
+{% extends "loreverse/layout.html" %}
+
+{% block body %}
+
+<h2>{{ story.title }} — World Explorer</h2>
+
+<p>{{ world.description }}</p>
+
+<hr>
+
+<h3>World Images</h3>
+
+{% if request.user == story.author %}
+    <a href="{% url 'add_world_image' story.id %}">Add World Image</a>
+{% endif %}
+
+{% for image in world.images.all %}
+    <div>
+        <img src="{{ image.image.url }}" alt="{{ story.title }} world image" width="300">
+    </div>
+{% empty %}
+    <p>No world images have been added yet.</p>
+{% endfor %}
+
+<hr>
+
+<h3>Characters</h3>
+
+{% if request.user == story.author %}
+    <a href="{% url 'create_character' story.id %}">Add Character</a>
+{% endif %}
+
+{% for character in world.characters.all %}
+    <div>
+        <h4>{{ character.name }}</h4>
+
+        {% if request.user == story.author %}
+            <a href="{% url 'add_character_image' story.id character.id %}">
+                Add Image
+            </a>
+        {% endif %}
+
+        {% for image in character.images.all %}
+            <img
+                src="{{ image.image.url }}"
+                alt="{{ character.name }}"
+                width="200"
+            >
+        {% empty %}
+            <p>No images yet.</p>
+        {% endfor %}
+    </div>
+{% empty %}
+    <p>No characters have been added yet.</p>
+{% endfor %}
+
+<hr>
+
+<h3>Locations</h3>
+
+{% if request.user == story.author %}
+    <a href="{% url 'create_location' story.id %}">Add Location</a>
+{% endif %}
+
+{% for location in world.locations.all %}
+    <div>
+        <h4>{{ location.name }}</h4>
+
+        {% if request.user == story.author %}
+            <a href="{% url 'add_location_image' story.id location.id %}">
+                Add Image
+            </a>
+        {% endif %}
+
+        {% for image in location.images.all %}
+            <img
+                src="{{ image.image.url }}"
+                alt="{{ location.name }}"
+                width="200"
+            >
+        {% empty %}
+            <p>No images yet.</p>
+        {% endfor %}
+    </div>
+{% empty %}
+    <p>No locations have been added yet.</p>
+{% endfor %}
+
+<hr>
+
+<h3>Creatures</h3>
+
+{% if request.user == story.author %}
+    <a href="{% url 'create_creature' story.id %}">Add Creature</a>
+{% endif %}
+
+{% for creature in world.creatures.all %}
+    <div>
+        <h4>{{ creature.name }}</h4>
+
+        {% if request.user == story.author %}
+            <a href="{% url 'add_creature_image' story.id creature.id %}">
+                Add Image
+            </a>
+        {% endif %}
+
+        {% for image in creature.images.all %}
+            <img
+                src="{{ image.image.url }}"
+                alt="{{ creature.name }}"
+                width="200"
+            >
+        {% empty %}
+            <p>No images yet.</p>
+        {% endfor %}
+    </div>
+{% empty %}
+    <p>No creatures have been added yet.</p>
+{% endfor %}
+
+<hr>
+
+<h3>Timeline</h3>
+
+{% if request.user == story.author %}
+    <a href="{% url 'create_timeline_event' story.id %}">
+        Add Timeline Event
+    </a>
+{% endif %}
+
+{% for event in world.timeline.all %}
+    <div>
+        <h4>{{ event.date }} - {{ event.title }}</h4>
+        <p>{{ event.description }}</p>
+    </div>
+{% empty %}
+    <p>No timeline events have been added yet.</p>
+{% endfor %}
+
+<hr>
+
+{% if request.user == story.author %}
+    <a href="{% url 'my_stories' %}">Back to My Stories</a>
+{% else %}
+    <a href="{% url 'story_detail' story.id %}">Back to Story</a>
+{% endif %}
+
+{% endblock %}

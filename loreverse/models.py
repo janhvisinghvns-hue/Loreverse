@@ -31,6 +31,115 @@ class Story(models.Model):
     def __str__(self):
         return self.title
 
+class World(models.Model):
+    story = models.OneToOneField(
+        Story,
+        on_delete=models.CASCADE,
+        related_name="world"
+    )
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"{self.story.title} World"
+
+
+class WorldImage(models.Model):
+    world = models.ForeignKey(
+        World,
+        on_delete=models.CASCADE,
+        related_name="images"
+    )
+    image = models.ImageField(upload_to="world_images/")
+
+    def __str__(self):
+        return f"{self.world.story.title} World Image"
+
+
+class Character(models.Model):
+    world = models.ForeignKey(
+        World,
+        on_delete=models.CASCADE,
+        related_name="characters"
+    )
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
+
+class CharacterImage(models.Model):
+    character = models.ForeignKey(
+        Character,
+        on_delete=models.CASCADE,
+        related_name="images"
+    )
+    image = models.ImageField(upload_to="character_images/")
+
+    def __str__(self):
+        return f"{self.character.name} Image"
+
+
+class Location(models.Model):
+    world = models.ForeignKey(
+        World,
+        on_delete=models.CASCADE,
+        related_name="locations"
+    )
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
+
+class LocationImage(models.Model):
+    location = models.ForeignKey(
+        Location,
+        on_delete=models.CASCADE,
+        related_name="images"
+    )
+    image = models.ImageField(upload_to="location_images/")
+
+    def __str__(self):
+        return f"{self.location.name} Image"
+
+
+class Creature(models.Model):
+    world = models.ForeignKey(
+        World,
+        on_delete=models.CASCADE,
+        related_name="creatures"
+    )
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
+
+class CreatureImage(models.Model):
+    creature = models.ForeignKey(
+        Creature,
+        on_delete=models.CASCADE,
+        related_name="images"
+    )
+    image = models.ImageField(upload_to="creature_images/")
+
+    def __str__(self):
+        return f"{self.creature.name} Image"
+
+
+class TimelineEvent(models.Model):
+    world = models.ForeignKey(
+        World,
+        on_delete=models.CASCADE,
+        related_name="timeline"
+    )
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    date = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.title                    
+
 class Chapter(models.Model):
     story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name="chapters")
     title = models.CharField(max_length=200)

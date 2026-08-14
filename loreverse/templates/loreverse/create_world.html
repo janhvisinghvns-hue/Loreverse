@@ -1,0 +1,20 @@
+{% extends "loreverse/layout.html" %}
+
+{% block body %}
+
+<h2>Create World for {{ story.title }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <div>
+        <label for="description">World Description:</label>
+        <textarea name="description" id="description" rows="6"></textarea>
+    </div>
+
+    <button type="submit">Create World</button>
+</form>
+
+<a href="{% url 'my_stories' %}">Back to My Stories</a>
+
+{% endblock %}

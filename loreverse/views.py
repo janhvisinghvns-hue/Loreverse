@@ -4,8 +4,11 @@ from django.contrib.auth import login , authenticate , logout
 from django.db import IntegrityError
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Profile , Story , Chapter  , ReadingProgress ,ReadingHistory , CompletedStory
-from .forms import ProfileForm , StoryForm , ChapterForm
+from .models import (Profile, Story, Chapter, ReadingProgress, ReadingHistory, 
+    CompletedStory, World, Character, Location, Creature,TimelineEvent,WorldImage, CharacterImage,
+    LocationImage,CreatureImage)
+from .forms import( ProfileForm , StoryForm , ChapterForm, CharacterForm,LocationForm, CreatureForm,
+    TimelineEventForm, CreatureImageForm,LocationImageForm,CharacterImageForm,WorldImageForm)
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
@@ -157,6 +160,144 @@ def create_story(request):
 def my_stories(request):
     stories = Story.objects.filter(author=request.user)
     return render(request, "loreverse/my_stories.html", {"stories": stories})
+
+@login_required
+def create_world(request, story_id):
+    story = get_object_or_404(Story, id=story_id, author=request.user)
+
+    if request.user.profile.role != "Writer":
+        return redirect("profile")
+
+    if hasattr(story, "world"):
+        return redirect("world_explorer", story_id=story.id)
+
+    if request.method == "POST":
+        description = request.POST.get("description", "").strip()
+
+        World.objects.create(
+            story=story,
+            description=description
+        )
+
+        return redirect("world_explorer", story_id=story.id)
+
+    return render(request, "loreverse/create_world.html", {
+        "story": story
+    })
+
+@login_required
+def world_explorer(request, story_id):
+    story = get_object_or_404(Story, id=story_id)
+
+    if not story.published and story.author != request.user:
+        return redirect("index")
+
+    world = get_object_or_404(World, story=story)
+
+    return render(request, "loreverse/world_explorer.html", {
+        "story": story, "world": world,
+    })
+
+
+@login_required
+def create_character(request, story_id):
+    story = get_object_or_404(Story, id=story_id, author=request.user)
+
+    if request.user.profile.role != "Writer":
+        return redirect("profile")
+
+    world = get_object_or_404(World, story=story)
+
+    if request.method == "POST":
+        form = CharacterForm(request.POST)
+
+        if form.is_valid():
+            character = form.save(commit=False)
+            character.world = world
+            character.save()
+            return redirect("world_explorer", story_id=story.id)
+    else:
+        form = CharacterForm()
+
+    return render(request, "loreverse/create_character.html", {
+        "form": form,
+        "story": story,
+    })
+
+@login_required
+def create_location(request, story_id):
+    story = get_object_or_404(Story, id=story_id, author=request.user)
+
+    if request.user.profile.role != "Writer":
+        return redirect("profile")
+
+    world = get_object_or_404(World, story=story)
+
+    if request.method == "POST":
+        form = LocationForm(request.POST)
+
+        if form.is_valid():
+            location = form.save(commit=False)
+            location.world = world
+            location.save()
+            return redirect("world_explorer", story_id=story.id)
+    else:
+        form = LocationForm()
+
+    return render(request, "loreverse/create_location.html", {
+        "form": form,
+        "story": story,
+    })
+
+@login_required
+def create_creature(request, story_id):
+    story = get_object_or_404(Story, id=story_id, author=request.user)
+
+    if request.user.profile.role != "Writer":
+        return redirect("profile")
+
+    world = get_object_or_404(World, story=story)
+
+    if request.method == "POST":
+        form = CreatureForm(request.POST)
+
+        if form.is_valid():
+            creature = form.save(commit=False)
+            creature.world = world
+            creature.save()
+            return redirect("world_explorer", story_id=story.id)
+    else:
+        form = CreatureForm()
+
+    return render(request, "loreverse/create_creature.html", {
+        "form": form,
+        "story": story,
+    })
+
+@login_required
+def create_timeline_event(request, story_id):
+    story = get_object_or_404(Story, id=story_id, author=request.user)
+
+    if request.user.profile.role != "Writer":
+        return redirect("profile")
+
+    world = get_object_or_404(World, story=story)
+
+    if request.method == "POST":
+        form = TimelineEventForm(request.POST)
+
+        if form.is_valid():
+            event = form.save(commit=False)
+            event.world = world
+            event.save()
+            return redirect("world_explorer", story_id=story.id)
+    else:
+        form = TimelineEventForm()
+
+    return render(request, "loreverse/create_timeline_event.html", {
+        "form": form,
+        "story": story,
+    })
 
 @login_required
 def edit_story(request, story_id):
@@ -349,4 +490,119 @@ def reader_dashboard(request):
         "want_to_read": want_to_read,
         "completed_stories": completed_stories,
         "reading_history": reading_history,
+    })
+
+@login_required
+def add_world_image(request, story_id):
+    story = get_object_or_404(Story, id=story_id, author=request.user)
+
+    if request.user.profile.role != "Writer":
+        return redirect("profile")
+
+    world = get_object_or_404(World, story=story)
+
+    if request.method == "POST":
+        form = WorldImageForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            world_image = form.save(commit=False)
+            world_image.world = world
+            world_image.save()
+            return redirect("world_explorer", story_id=story.id)
+    else:
+        form = WorldImageForm()
+
+    return render(request, "loreverse/add_world_image.html", {
+        "form": form,
+        "story": story,
+    })
+
+@login_required
+def add_character_image(request, story_id, character_id):
+    story = get_object_or_404(Story, id=story_id, author=request.user)
+
+    if request.user.profile.role != "Writer":
+        return redirect("profile")
+
+    character = get_object_or_404(
+        Character,
+        id=character_id,
+        world__story=story
+    )
+
+    if request.method == "POST":
+        form = CharacterImageForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            character_image = form.save(commit=False)
+            character_image.character = character
+            character_image.save()
+            return redirect("world_explorer", story_id=story.id)
+    else:
+        form = CharacterImageForm()
+
+    return render(request, "loreverse/add_character_image.html", {
+        "form": form,
+        "story": story,
+        "character": character,
+    })
+
+@login_required
+def add_location_image(request, story_id, location_id):
+    story = get_object_or_404(Story, id=story_id, author=request.user)
+
+    if request.user.profile.role != "Writer":
+        return redirect("profile")
+
+    location = get_object_or_404(
+        Location,
+        id=location_id,
+        world__story=story
+    )
+
+    if request.method == "POST":
+        form = LocationImageForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            location_image = form.save(commit=False)
+            location_image.location = location
+            location_image.save()
+            return redirect("world_explorer", story_id=story.id)
+    else:
+        form = LocationImageForm()
+
+    return render(request, "loreverse/add_location_image.html", {
+        "form": form,
+        "story": story,
+        "location": location,
+    })
+
+@login_required
+def add_creature_image(request, story_id, creature_id):
+    story = get_object_or_404(Story, id=story_id, author=request.user)
+
+    if request.user.profile.role != "Writer":
+        return redirect("profile")
+
+    creature = get_object_or_404(
+        Creature,
+        id=creature_id,
+        world__story=story
+    )
+
+    if request.method == "POST":
+        form = CreatureImageForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            creature_image = form.save(commit=False)
+            creature_image.creature = creature
+            creature_image.save()
+            return redirect("world_explorer", story_id=story.id)
+    else:
+        form = CreatureImageForm()
+
+    return render(request, "loreverse/add_creature_image.html", {
+        "form": form,
+        "story": story,
+        "creature": creature,
     })

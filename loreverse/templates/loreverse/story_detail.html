@@ -48,17 +48,25 @@
     {% endif %}
 {% endif %}
 
+{% if story.world %}
+    <p>
+        <a href="{% url 'world_explorer' story.id %}">🌍 Explore World</a>
+    </p>
+{% endif %}
+
 <h3>Chapters</h3>
 
 {% if chapters %}
     {% for chapter in chapters %}
-        <p> Chapter {{ chapter.chapter_number }}:
-            <a href="{% url 'read_chapter' story.id chapter.id %}">{{ chapter.title }}</a>
+        <p>
+            Chapter {{ chapter.chapter_number }}:
+            <a href="{% url 'read_chapter' story.id chapter.id %}">
+                {{ chapter.title }}
+            </a>
         </p>
     {% endfor %}
 {% else %}
     <p>No chapters yet.</p>
 {% endif %}
-
 
 {% endblock %}
