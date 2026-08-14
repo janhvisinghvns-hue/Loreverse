@@ -17,6 +17,11 @@
                 <p>Not Published</p>
             {% endif %}
 
+            <p>
+                ❤️ {{ story.total_likes }} Likes |
+                💬 {{ story.total_comments }} Comments
+            </p>
+
             <a href="{% url 'edit_story' story.id %}">Edit</a>
 
             <a href="{% url 'delete_story' story.id %}">Delete</a>

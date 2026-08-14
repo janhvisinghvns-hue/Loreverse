@@ -12,7 +12,7 @@ from .forms import( ProfileForm , StoryForm , ChapterForm, CharacterForm,Locatio
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
-from django.db.models import Q
+from django.db.models import Q , Count
 
 
 def index(request):
@@ -158,7 +158,10 @@ def create_story(request):
 
 @login_required
 def my_stories(request):
-    stories = Story.objects.filter(author=request.user)
+    stories = Story.objects.filter(author=request.user).annotate(
+        total_likes=Count("chapters__likes", distinct=True),
+        total_comments=Count("chapters__comments", distinct=True),
+    )
     return render(request, "loreverse/my_stories.html", {"stories": stories})
 
 @login_required
