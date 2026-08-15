@@ -1203,3 +1203,7 @@ body.dark-mode #page-loader p {
     cursor: pointer;
     line-height: 1;
 }
+
+body.dark-mode .chapter-content {
+    color: #f1f3f5;
+}
