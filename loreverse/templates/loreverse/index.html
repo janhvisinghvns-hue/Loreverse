@@ -14,25 +14,27 @@
 
     {% if user.is_authenticated %}
         {% if progress %}
+          {% for item in progress %}
             <div  class="card shadow-sm continue-reading-card mb-5">
                 <div class="continue-reading-content">
-                   {% if progress.story.cover_image %}
-                      <img src="{{ progress.story.cover_image.url }}" alt="{{ progress.story.title }} cover"
+                   {% if item.story.cover_image %}
+                      <img src="{{ item.story.cover_image.url }}" alt="{{ item.story.title }} cover"
                       class="continue-reading-image">
                     {% endif %}
                     <div class="continue-reading-details">
                        <p class="continue-reading-label mb-1">Continue Reading</p>
-                       <h3 class="continue-reading-title">{{ progress.story.title }}</h3>
+                       <h3 class="continue-reading-title">{{ item.story.title }}</h3>
                        <p class="continue-reading-chapter">
-                          Chapter {{ progress.chapter.chapter_number }}:
-                           {{ progress.chapter.title }}
+                          Chapter {{ item.chapter.chapter_number }}:
+                           {{ item.chapter.title }}
                         </p>
-                        <a class="btn btn-success" href="{% url 'continue_reading' progress.story.id %}">
+                        <a class="btn btn-success" href="{% url 'continue_reading' item.story.id %}">
                            Continue Reading
                         </a>
                     </div>
                 </div>    
             </div>
+          {% endfor %}  
         {% endif %}
     {% endif %}
 

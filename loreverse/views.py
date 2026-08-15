@@ -21,7 +21,7 @@ def index(request):
     if request.user.is_authenticated:
         progress = ReadingProgress.objects.filter(
             user=request.user
-        ).select_related("story", "chapter").first()
+        ).select_related("story", "chapter").order_by("-updated_at")
 
     fantasy_stories = Story.objects.filter(published=True, genre="Fantasy")[:5]
 
