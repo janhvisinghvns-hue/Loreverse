@@ -3,37 +3,29 @@
 {% block body %}
 
 <div class="container py-5">
-
     <article class="reading-page">
-
         <header class="reading-header">
-
             <p class="reading-story-title">
                 {{ story.title }}
             </p>
-
             <h1>Chapter {{ chapter.chapter_number }}:
                 {{ chapter.title }}
             </h1>
-
         </header>
 
-
-        <div class="chapter-content">
-            {{ chapter.content }}
+        <div class="reading-controls" aria-label="Text size controls">
+          <button type="button" id="decrease-font">A−</button>
+          <button type="button" id="reset-font">A</button>
+          <button type="button" id="increase-font">A+</button>
         </div>
-
+        <div class="chapter-content" id="chapter-content">{{ chapter.content }}</div>
 
         <div class="chapter-like">
-
-            <form action="{% url 'toggle_chapter_like' story.id chapter.id %}"
-                  method="post">
+            <form action="{% url 'toggle_chapter_like' story.id chapter.id %}" method="post">
 
                 {% csrf_token %}
-
                 <button type="submit"
                         class="btn {% if user_liked %}btn-danger{% else %}btn-outline-danger{% endif %}">
-
                     {% if user_liked %}
                         ❤️ Unlike
                     {% else %}
@@ -41,61 +33,40 @@
                     {% endif %}
 
                 </button>
-
                 <span class="likes-count">{{ likes_count }} likes</span>
             </form>
         </div>
-
-
         <section class="comments-section">
-
             <h2>Comments</h2>
             <p class="text-muted">Share your thoughts about this chapter.</p>
-
-
             <div class="comment-form card border-0 shadow-sm">
                 <div class="card-body">
                     <form method="post">
-
                         {% csrf_token %}
-
                         {{ comment_form.as_p }}
-
-                        <button type="submit" class="btn btn-primary">
-                            Post Comment
+                        <button type="submit" class="btn btn-primary">Post Comment
                         </button>
                     </form>
                 </div>
             </div>
 
-
             <div class="comments-list">
-
                 {% for comment in comments %}
-
                     <div class="comment-item">
                         <strong>{{ comment.user.username }}</strong>
                         <p>{{ comment.content }}</p>
                     </div>
 
                 {% empty %}
-
                     <div class="empty-state">
                         <p>No comments yet.</p>
                     </div>
-
                 {% endfor %}
-
             </div>
-
         </section>
 
-
-        <nav class="chapter-navigation"
-             aria-label="Chapter navigation">
-
+        <nav class="chapter-navigation" aria-label="Chapter navigation">
             {% if previous_chapter %}
-
                 <a href="{% url 'read_chapter' story.id previous_chapter.id %}" class="chapter-nav-button">
                     <span>←</span>
                     <div>
@@ -108,23 +79,17 @@
                 <div></div>
             {% endif %}
 
-
             {% if next_chapter %}
-
                 <a href="{% url 'read_chapter' story.id next_chapter.id %}" class="chapter-nav-button text-end">
                     <div>
                         <small>Next</small>
                         <strong>Chapter {{ next_chapter.chapter_number }}</strong>
                     </div>
-
                     <span>→</span>
                 </a>
-
             {% endif %}
-
         </nav>
     </article>
-
 </div>
 
 {% endblock %}

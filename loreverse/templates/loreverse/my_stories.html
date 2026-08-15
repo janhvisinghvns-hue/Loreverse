@@ -3,14 +3,12 @@
 {% block body %}
 
 <div class="container py-5">
-
     <div class="mb-5">
         <h1 class="fw-bold">My Stories</h1>
         <p class="text-muted mb-0">
             Manage your stories, chapters, worlds, and publishing.
         </p>
     </div>
-
 
     {% if stories %}
         <div class="row g-4">
@@ -20,47 +18,35 @@
                         <div class="writer-story-header">
                             <div>
                                 <h2>{{ story.title }}</h2>
-
                                 {% if story.published %}
-
                                     <span class="badge text-bg-success">Published</span>
-
                                 {% else %}
-
                                     <span class="badge text-bg-secondary">Not Published</span>
-
                                 {% endif %}
                             </div>
-
                         </div>
-
                         <div class="writer-story-stats">
                             <span>❤️ {{ story.total_likes }} Likes</span>
                             <span>💬 {{ story.total_comments }} Comments</span>
                         </div>
-
                         <div class="writer-story-actions">
-                            <a href="{% url 'edit_story' story.id %}"class="btn btn-outline-primary">
-                                Edit
-                            </a>
-
-                            <a href="{% url 'delete_story' story.id %}" class="btn btn-outline-danger">
-                                Delete
-                            </a>
-
+                            <a href="{% url 'edit_story' story.id %}"class="btn btn-outline-primary">Edit</a>
+                            <form action="{% url 'delete_story' story.id %}" method="post" class="d-inline delete-story-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger">
+                                   Delete
+                                </button>
+                            </form>
                             <a href="{% url 'create_chapter' story.id %}" class="btn btn-primary">
                                 Add Chapter
                             </a>
-
                         </div>
-
                         <div class="writer-secondary-actions">
                             {% if story.published %}
                                 <a href="{% url 'story_detail' story.id %}" class="btn btn-outline-secondary">
                                     View Story
                                 </a>
                             {% endif %}
-
 
                             {% if story.world %}
                                 <a href="{% url 'world_explorer' story.id %}" class="btn btn-outline-secondary">
@@ -73,7 +59,6 @@
                             {% endif %}
 
                         </div>
-
                         {% if not story.published %}
                             <div class="publish-section">
                                 <p>Your story is ready to be shared?</p>
@@ -89,17 +74,10 @@
         </div>
     {% else %}
         <div class="empty-state text-center">
-
             <h4>No stories yet</h4>
-
-            <p>
-                You have not created any stories yet.
-            </p>
-
+            <p>You have not created any stories yet.</p>
         </div>
-
     {% endif %}
-
 </div>
 
 {% endblock %}

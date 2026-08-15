@@ -20,6 +20,7 @@ class Story(models.Model):
     genre = models.CharField(max_length=30, choices=GENRE_CHOICES, default="Other")
     tags = models.CharField(max_length=300, blank=True)
     description = models.TextField()
+    cover_image = models.ImageField(upload_to="story_covers/",blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

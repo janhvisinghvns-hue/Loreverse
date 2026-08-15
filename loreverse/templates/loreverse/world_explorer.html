@@ -3,376 +3,197 @@
 {% block body %}
 
 <div class="container py-5">
-
-   
     <div class="world-header mb-5">
-
-        <p class="text-muted text-uppercase small fw-semibold mb-2">
-            World Explorer
-        </p>
-
-        <h1 class="display-5 fw-bold">
-            {{ story.title }}
-        </h1>
-
-        <p class="lead text-muted mb-0">
-            {{ world.description }}
-        </p>
-
+        <p class="text-muted text-uppercase small fw-semibold mb-2">World Explorer</p>
+        <h1 class="display-5 fw-bold">{{ story.title }}</h1>
+        <p class="lead text-muted mb-0">{{ world.description }}</p>
     </div>
 
-
-   
     <section class="world-section">
-
         <div class="world-section-header">
-
             <div>
                 <h2>🌍 World Images</h2>
                 <p>Visual glimpses into this world.</p>
             </div>
-
             {% if request.user == story.author %}
-                <a href="{% url 'add_world_image' story.id %}"
-                   class="btn btn-outline-primary">
-                    Add World Image
-                </a>
+                <a href="{% url 'add_world_image' story.id %}" class="btn btn-outline-primary">Add World Image</a>
             {% endif %}
-
         </div>
-
-
         {% if world.images.all %}
-
             <div class="world-image-grid">
-
                 {% for image in world.images.all %}
-
                     <div class="world-image-card">
-
-                        <img src="{{ image.image.url }}"
-                             alt="{{ story.title }} world image">
-
+                        <img src="{{ image.image.url }}" alt="{{ story.title }} world image"
+                         class="world-explorer-image">
                     </div>
-
                 {% endfor %}
-
             </div>
-
         {% else %}
-
             <div class="empty-state">
                 <p>No world images have been added yet.</p>
             </div>
-
         {% endif %}
-
     </section>
 
-
     <section class="world-section">
-
         <div class="world-section-header">
-
             <div>
                 <h2>👤 Characters</h2>
                 <p>Meet the people who inhabit this world.</p>
             </div>
-
             {% if request.user == story.author %}
-                <a href="{% url 'create_character' story.id %}"
-                   class="btn btn-outline-primary">
-                    Add Character
-                </a>
+                <a href="{% url 'create_character' story.id %}" class="btn btn-outline-primary">Add Character</a>
             {% endif %}
-
         </div>
 
-
         {% if world.characters.all %}
-
             <div class="row g-4">
-
                 {% for character in world.characters.all %}
-
                     <div class="col-md-6 col-lg-4">
-
                         <div class="world-entity-card">
-
                             <h3>{{ character.name }}</h3>
-
                             {% if request.user == story.author %}
                                 <a href="{% url 'add_character_image' story.id character.id %}"
-                                   class="btn btn-sm btn-outline-secondary mb-3">
-                                    Add Image
-                                </a>
+                                class="btn btn-sm btn-outline-secondary mb-3">Add Image</a>
                             {% endif %}
-
-
                             <div class="entity-images">
-
                                 {% for image in character.images.all %}
-
-                                    <img src="{{ image.image.url }}"
-                                         alt="{{ character.name }}">
-
+                                    <img src="{{ image.image.url }}"alt="{{ character.name }}"
+                                    class="world-explorer-image">
                                 {% empty %}
-
-                                    <p class="text-muted small">
-                                        No images yet.
-                                    </p>
-
+                                    <p class="text-muted small"> No images yet.</p>
                                 {% endfor %}
-
                             </div>
-
                         </div>
-
                     </div>
-
                 {% endfor %}
-
             </div>
-
         {% else %}
-
             <div class="empty-state">
                 <p>No characters have been added yet.</p>
             </div>
-
         {% endif %}
-
     </section>
 
-
     <section class="world-section">
-
         <div class="world-section-header">
-
             <div>
                 <h2> Locations</h2>
                 <p>Explore important places in the world.</p>
             </div>
-
             {% if request.user == story.author %}
-                <a href="{% url 'create_location' story.id %}"
-                   class="btn btn-outline-primary">
-                    Add Location
-                </a>
+                <a href="{% url 'create_location' story.id %}" class="btn btn-outline-primary">Add Location</a>
             {% endif %}
-
         </div>
 
-
         {% if world.locations.all %}
-
             <div class="row g-4">
-
                 {% for location in world.locations.all %}
-
                     <div class="col-md-6 col-lg-4">
-
                         <div class="world-entity-card">
-
                             <h3>{{ location.name }}</h3>
-
                             {% if request.user == story.author %}
                                 <a href="{% url 'add_location_image' story.id location.id %}"
-                                   class="btn btn-sm btn-outline-secondary mb-3">
-                                    Add Image
-                                </a>
+                                class="btn btn-sm btn-outline-secondary mb-3">Add Image</a>
                             {% endif %}
-
-
                             <div class="entity-images">
-
                                 {% for image in location.images.all %}
-
-                                    <img src="{{ image.image.url }}"
-                                         alt="{{ location.name }}">
-
+                                    <img src="{{ image.image.url }}" alt="{{ location.name }}"
+                                    class="world-explorer-image">
                                 {% empty %}
-
-                                    <p class="text-muted small">
-                                        No images yet.
-                                    </p>
-
+                                    <p class="text-muted small">No images yet.</p>
                                 {% endfor %}
-
                             </div>
-
                         </div>
-
                     </div>
-
                 {% endfor %}
-
             </div>
-
         {% else %}
-
             <div class="empty-state">
                 <p>No locations have been added yet.</p>
             </div>
-
         {% endif %}
-
     </section>
 
-
     <section class="world-section">
-
         <div class="world-section-header">
-
             <div>
                 <h2>🐉 Creatures</h2>
                 <p>Discover the creatures that inhabit this world.</p>
             </div>
-
             {% if request.user == story.author %}
-                <a href="{% url 'create_creature' story.id %}"
-                   class="btn btn-outline-primary">
-                    Add Creature
-                </a>
+                <a href="{% url 'create_creature' story.id %}" class="btn btn-outline-primary">Add Creature</a>
             {% endif %}
-
         </div>
-
-
         {% if world.creatures.all %}
-
             <div class="row g-4">
-
                 {% for creature in world.creatures.all %}
-
                     <div class="col-md-6 col-lg-4">
-
                         <div class="world-entity-card">
-
                             <h3>{{ creature.name }}</h3>
-
                             {% if request.user == story.author %}
                                 <a href="{% url 'add_creature_image' story.id creature.id %}"
-                                   class="btn btn-sm btn-outline-secondary mb-3">
-                                    Add Image
-                                </a>
+                                class="btn btn-sm btn-outline-secondary mb-3">Add Image</a>
                             {% endif %}
-
-
                             <div class="entity-images">
-
                                 {% for image in creature.images.all %}
-
-                                    <img src="{{ image.image.url }}"
-                                         alt="{{ creature.name }}">
-
+                                    <img src="{{ image.image.url }}"alt="{{ creature.name }}"
+                                    class="world-explorer-image">
                                 {% empty %}
-
-                                    <p class="text-muted small">
-                                        No images yet.
-                                    </p>
-
+                                    <p class="text-muted small">No images yet.</p>
                                 {% endfor %}
-
                             </div>
-
                         </div>
-
                     </div>
-
                 {% endfor %}
-
             </div>
-
         {% else %}
-
             <div class="empty-state">
                 <p>No creatures have been added yet.</p>
             </div>
-
         {% endif %}
-
     </section>
 
-
     <section class="world-section">
-
         <div class="world-section-header">
-
             <div>
                 <h2> Timeline</h2>
                 <p>Important events from the world's history.</p>
             </div>
-
             {% if request.user == story.author %}
-                <a href="{% url 'create_timeline_event' story.id %}"
-                   class="btn btn-outline-primary">
+                <a href="{% url 'create_timeline_event' story.id %}"class="btn btn-outline-primary">
                     Add Timeline Event
                 </a>
             {% endif %}
-
         </div>
 
-
         {% if world.timeline.all %}
-
             <div class="timeline">
-
                 {% for event in world.timeline.all %}
-
                     <div class="timeline-item">
-
-                        <div class="timeline-date">
-                            {{ event.date }}
-                        </div>
-
+                        <div class="timeline-date">{{ event.date }}</div>
                         <div class="timeline-content">
-
                             <h3>{{ event.title }}</h3>
-
-                            <p>
-                                {{ event.description }}
-                            </p>
-
+                            <p>{{ event.description }}</p>
                         </div>
-
                     </div>
-
                 {% endfor %}
-
             </div>
-
         {% else %}
-
             <div class="empty-state">
                 <p>No timeline events have been added yet.</p>
             </div>
-
         {% endif %}
-
     </section>
 
-
     <div class="world-back-link">
-
         {% if request.user == story.author %}
-
-            <a href="{% url 'my_stories' %}"
-               class="btn btn-outline-secondary">
-                ← Back to My Stories
-            </a>
-
+            <a href="{% url 'my_stories' %}" class="btn btn-outline-secondary">← Back to My Stories</a>
         {% else %}
-
-            <a href="{% url 'story_detail' story.id %}"
-               class="btn btn-outline-secondary">
+            <a href="{% url 'story_detail' story.id %}" class="btn btn-outline-secondary">
                 ← Back to Story
             </a>
-
         {% endif %}
-
     </div>
-
 </div>
-
 {% endblock %}

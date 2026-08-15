@@ -13,7 +13,7 @@ class ProfileForm(forms.ModelForm):
 class StoryForm(forms.ModelForm):
     class Meta:
         model = Story
-        fields = ["title", "genre", "tags", "description"]
+        fields = ["title", "genre", "tags", "description" , "cover_image"]
 
 class ChapterForm(forms.ModelForm):
     class Meta:

@@ -144,7 +144,7 @@ def create_story(request):
         return redirect("profile")
 
     if request.method == "POST":
-        form = StoryForm(request.POST)
+        form = StoryForm(request.POST , request.FILES)
 
         if form.is_valid():
             story = form.save(commit=False)
@@ -310,7 +310,7 @@ def edit_story(request, story_id):
         return redirect("profile")
 
     if request.method == "POST":
-        form = StoryForm(request.POST, instance=story)
+        form = StoryForm(request.POST,  request.FILES, instance=story)
 
         if form.is_valid():
             form.save()
@@ -327,13 +327,10 @@ def delete_story(request, story_id):
     story = get_object_or_404(Story, id=story_id, author=request.user)
     if request.user.profile.role != "Writer":
         return redirect("profile")
-
     if request.method == "POST":
         story.delete()
         return redirect("my_stories")
-    return render(request, "loreverse/delete_story.html", {
-        "story": story
-    })
+    return redirect("my_stories")
 
 @login_required
 def publish_story(request, story_id):

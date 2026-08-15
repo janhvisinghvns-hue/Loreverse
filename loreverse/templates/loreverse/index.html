@@ -2,12 +2,9 @@
 
 {% block body %}
 
-<div class="container py-5">
-
-    
+<div class="container py-5"> 
     <div class="text-center mb-5">
         <h1 class="display-4 fw-bold">Welcome to Loreverse</h1>
-
         <p class="lead text-muted">
             Discover stories, explore worlds, and continue your journey.
         </p>
@@ -15,36 +12,33 @@
         <a href="{% url 'published_stories' %}" class="btn btn-primary btn-lg mt-2">Browse Stories</a>
     </div>
 
-
-   
     {% if user.is_authenticated %}
         {% if progress %}
-
             <div  class="card shadow-sm continue-reading-card mb-5">
-                <div class="card-body p-4">
-
-                    <p class="continue-reading-label mb-1">Continue Reading</p>
-
-                    <h3 class="continue-reading-title">{{ progress.story.title }}</h3>
-
-                    <p class="continue-reading-chapter">
-                        Chapter {{ progress.chapter.chapter_number }}:
-                        {{ progress.chapter.title }}
-                    </p>
-
-                    <a class="btn btn-success" href="{% url 'continue_reading' progress.story.id %}">
-                        Continue Reading
-                    </a>
-                </div>
+                <div class="continue-reading-content">
+                   {% if progress.story.cover_image %}
+                      <img src="{{ progress.story.cover_image.url }}" alt="{{ progress.story.title }} cover"
+                      class="continue-reading-image">
+                    {% endif %}
+                    <div class="continue-reading-details">
+                       <p class="continue-reading-label mb-1">Continue Reading</p>
+                       <h3 class="continue-reading-title">{{ progress.story.title }}</h3>
+                       <p class="continue-reading-chapter">
+                          Chapter {{ progress.chapter.chapter_number }}:
+                           {{ progress.chapter.title }}
+                        </p>
+                        <a class="btn btn-success" href="{% url 'continue_reading' progress.story.id %}">
+                           Continue Reading
+                        </a>
+                    </div>
+                </div>    
             </div>
-
         {% endif %}
     {% endif %}
 
 
     
     <section class="mb-5">
-
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="fw-bold mb-0">Fantasy</h2>
         </div>
@@ -54,108 +48,90 @@
                 {% for story in fantasy_stories %}
                     <div class="col-md-6 col-lg-4">
                         <div class="card h-100 shadow-sm border-0 story-card">
+                            {% if story.cover_image %}
+                               <img src="{{ story.cover_image.url }}" alt="{{ story.title }} cover"
+                                class="card-img-top story-cover-image">
+                            {% endif %}
                             <div class="card-body">
                                 <h4 class="card-title">
-                                    <a href="{% url 'story_detail' story.id %}"class="text-decoration-none">
-                                        {{ story.title }}
+                                   <a href="{% url 'story_detail' story.id %}" class="text-decoration-none">
+                                      {{ story.title }}
                                     </a>
                                 </h4>
-
-                                <p class="text-muted mb-0">
-                                    Written by {{ story.author.username }}
-                                </p>
+                                <p class="text-muted mb-0">Written by {{ story.author.username }}</p>
                             </div>
                         </div>
                     </div>
                 {% endfor %}
             </div>
-
         {% else %}
             <p class="text-muted">No Fantasy stories yet.</p>
         {% endif %}
-
     </section>
 
-
     <section class="mb-5">
-
         <h2 class="fw-bold mb-3">Mystery</h2>
         {% if mystery_stories %}
             <div class="row g-4">
-
                 {% for story in mystery_stories %}
-
                     <div class="col-md-6 col-lg-4">
                         <div class="card h-100 shadow-sm border-0 story-card">
-                            <div class="card-body">
-                                <h4 class="card-title">
-                                    <a href="{% url 'story_detail' story.id %}" class="text-decoration-none">
-                                        {{ story.title }}
-                                    </a>
-                                </h4>
-
-                                <p class="text-muted mb-0">
-                                    Written by {{ story.author.username }}
-                                </p>
+                           {% if story.cover_image %}
+                                <img src="{{ story.cover_image.url }}" alt="{{ story.title }} cover"
+                                class="card-img-top story-cover-image">
+                            {% endif %}
+                           <div class="card-body">
+                              <h4 class="card-title">
+                                   <a href="{% url 'story_detail' story.id %}" class="text-decoration-none">
+                                     {{ story.title }}
+                                   </a>
+                              </h4>
+                              <p class="text-muted mb-0">Written by {{ story.author.username }}</p>
                             </div>
                         </div>
                     </div>
                 {% endfor %}
             </div>
-
         {% else %}
-
             <p class="text-muted">No Mystery stories yet.</p>
-
         {% endif %}
-
     </section>
-
-
-    
+ 
     <section class="mb-5">
-
         <h2 class="fw-bold mb-3">Adventure</h2>
         {% if adventure_stories %}
             <div class="row g-4">
                 {% for story in adventure_stories %}
                     <div class="col-md-6 col-lg-4">
                         <div class="card h-100 shadow-sm border-0 story-card">
-                            <div class="card-body">
-                                <h4 class="card-title">
-                                    <a href="{% url 'story_detail' story.id %}" class="text-decoration-none">
-                                        {{ story.title }}
-                                    </a>
-                                </h4>
-
-                                <p class="text-muted mb-0">
-                                    Written by {{ story.author.username }}
-                                </p>
+                           {% if story.cover_image %}
+                                <img src="{{ story.cover_image.url }}" alt="{{ story.title }} cover"
+                                class="card-img-top story-cover-image">
+                            {% endif %}
+                           <div class="card-body">
+                              <h4 class="card-title">
+                                   <a href="{% url 'story_detail' story.id %}" class="text-decoration-none">
+                                     {{ story.title }}
+                                   </a>
+                              </h4>
+                              <p class="text-muted mb-0">Written by {{ story.author.username }}</p>
                             </div>
                         </div>
                     </div>
                 {% endfor %}
             </div>
-
         {% else %}
             <p class="text-muted">No Adventure stories yet.</p>
         {% endif %}
-
     </section>
-
-
-    
+  
     {% if user.is_authenticated %}
         {% if user.profile.role == "Writer" %}
-
             <div class="border-top pt-4 mt-5">
-
                 <h3 class="fw-bold mb-3">Writer Tools</h3>
                 <a href="{% url 'create_story' %}"class="btn btn-primary me-2">Create Story</a>
                 <a href="{% url 'my_stories' %}" class="btn btn-outline-primary">My Stories</a>
-
             </div>
-
         {% endif %}
     {% endif %}
 
