@@ -30,6 +30,7 @@ urlpatterns = [
     path("stories/<int:story_id>/chapters/<int:chapter_id>/like/",views.toggle_chapter_like, name="toggle_chapter_like"),
     path("stories/<int:story_id>/continue/", views.continue_reading, name="continue_reading"),
     path("stories/<int:story_id>/create_chapter/", views.create_chapter, name="create_chapter"),
+    path("chapters/<int:chapter_id>/edit/", views.edit_chapter, name="edit_chapter"),
     path("stories/<int:story_id>/world/image/add/", views.add_world_image, name="add_world_image"),
     path("stories/<int:story_id>/world/character/<int:character_id>/image/add/",views.add_character_image,name="add_character_image"),
     path("stories/<int:story_id>/world/location/<int:location_id>/image/add/", views.add_location_image, name="add_location_image"),

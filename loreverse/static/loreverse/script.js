@@ -102,3 +102,93 @@ deleteStoryForms.forEach(function (form) {
         }
     });
 });
+
+const likeForm = document.getElementById("chapter-like-form");
+
+if (likeForm) {
+    likeForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const button = likeForm.querySelector("button");
+        const likesCount = likeForm.querySelector(".likes-count");
+
+        const csrfToken = likeForm.querySelector(
+            "[name=csrfmiddlewaretoken]"
+        ).value;
+
+        fetch(likeForm.action, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": csrfToken,
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.user_liked) {
+                button.innerHTML = "❤️ Unlike";
+                button.classList.remove("btn-outline-danger");
+                button.classList.add("btn-danger");
+            } else {
+                button.innerHTML = "🤍 Like";
+                button.classList.remove("btn-danger");
+                button.classList.add("btn-outline-danger");
+            }
+
+            likesCount.textContent = `${data.likes_count} likes`;
+        })
+        .catch(error => {
+            console.error("Error toggling chapter like:", error);
+        });
+    });
+}
+
+const commentForm = document.getElementById("chapter-comment-form");
+
+if (commentForm) {
+    commentForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const formData = new FormData(commentForm);
+        const commentsList = document.getElementById("comments-list");
+        const csrfToken = commentForm.querySelector(
+            "[name=csrfmiddlewaretoken]"
+        ).value;
+
+        fetch(window.location.href, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": csrfToken,
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            const emptyState = commentsList.querySelector(".empty-state");
+
+            if (emptyState) {
+                emptyState.remove();
+            }
+
+            const commentItem = document.createElement("div");
+            commentItem.className = "comment-item";
+
+            const username = document.createElement("strong");
+            username.textContent = data.username;
+
+            const content = document.createElement("p");
+            content.textContent = data.content;
+
+            commentItem.appendChild(username);
+            commentItem.appendChild(content);
+
+            commentsList.appendChild(commentItem);
+
+            commentForm.reset();
+        })
+        .catch(error => {
+            console.error("Error posting comment:", error);
+        });
+    });
+}

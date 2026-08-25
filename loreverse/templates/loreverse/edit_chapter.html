@@ -1,0 +1,28 @@
+{% extends "loreverse/layout.html" %}
+
+{% block body %}
+
+<div class="container py-5">
+    <div class="form-page">
+        <div class="form-page-header">
+            <p class="text-muted text-uppercase small fw-semibold mb-2"> {{ story.title }}
+            </p>
+            <h1 class="fw-bold">Edit Chapter</h1>
+            <p class="text-muted">
+                Update your chapter content and details.
+            </p>
+        </div>
+        <div class="form-card">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">  Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

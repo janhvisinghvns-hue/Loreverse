@@ -60,6 +60,7 @@ Writers can:
 * Create stories
 * Save stories as drafts
 * Edit stories
+* Edit existing chapters directly from the story's edit interface.
 * Delete stories
 * Publish stories
 * Create chapters
@@ -120,6 +121,7 @@ Readers can:
 * Like chapters
 * Comment on chapters
 * Adjust chapter text size using `A-`, `A`, and `A+`
+* Submit likes and comments asynchronously using JavaScript and JSON
 
 Writers can see the number of likes and comments associated with their stories.
 
@@ -131,6 +133,7 @@ JavaScript is used for:
 * Chapter text-size controls
 * Story deletion confirmation
 * World Explorer image lightbox functionality
+* Asynchronous chapter likes and comments
 
 ## Database Models
 

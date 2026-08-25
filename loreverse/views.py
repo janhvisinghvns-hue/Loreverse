@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login , authenticate , logout
 from django.db import IntegrityError
 from django.urls import reverse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect , JsonResponse
 from .models import (Profile, Story, Chapter, ReadingProgress, ReadingHistory, 
     CompletedStory, World, Character, Location, Creature,TimelineEvent,WorldImage, CharacterImage,
     LocationImage,CreatureImage, ChapterLike, ChapterComment)
@@ -24,16 +24,12 @@ def index(request):
         ).select_related("story", "chapter").order_by("-updated_at")
 
     fantasy_stories = Story.objects.filter(published=True, genre="Fantasy")[:5]
-
     mystery_stories = Story.objects.filter(published=True,genre="Mystery")[:5]
-
     adventure_stories = Story.objects.filter(published=True,genre="Adventure")[:5]
 
     return render(request, "loreverse/index.html", {
-        "progress": progress,
-        "fantasy_stories": fantasy_stories,
-        "mystery_stories": mystery_stories,
-        "adventure_stories": adventure_stories,
+        "progress": progress, "fantasy_stories": fantasy_stories,
+        "mystery_stories": mystery_stories, "adventure_stories": adventure_stories,
     })
 
 
@@ -107,8 +103,7 @@ def profile_view(request):
         form = ProfileForm(instance=profile)
 
     return render(request, "loreverse/profile.html", {
-        "profile": profile,
-        "form": form
+        "profile": profile, "form": form
     })
 
 @login_required
@@ -181,9 +176,7 @@ def create_world(request, story_id):
             story=story,
             description=description
         )
-
         return redirect("world_explorer", story_id=story.id)
-
     return render(request, "loreverse/create_world.html", {
         "story": story
     })
@@ -223,8 +216,7 @@ def create_character(request, story_id):
         form = CharacterForm()
 
     return render(request, "loreverse/create_character.html", {
-        "form": form,
-        "story": story,
+        "form": form, "story": story,
     })
 
 @login_required
@@ -248,8 +240,7 @@ def create_location(request, story_id):
         form = LocationForm()
 
     return render(request, "loreverse/create_location.html", {
-        "form": form,
-        "story": story,
+        "form": form,  "story": story,
     })
 
 @login_required
@@ -273,8 +264,7 @@ def create_creature(request, story_id):
         form = CreatureForm()
 
     return render(request, "loreverse/create_creature.html", {
-        "form": form,
-        "story": story,
+        "form": form,   "story": story,
     })
 
 @login_required
@@ -298,8 +288,7 @@ def create_timeline_event(request, story_id):
         form = TimelineEventForm()
 
     return render(request, "loreverse/create_timeline_event.html", {
-        "form": form,
-        "story": story,
+        "form": form, "story": story,
     })
 
 @login_required
@@ -319,8 +308,10 @@ def edit_story(request, story_id):
         form = StoryForm(instance=story)
 
     return render(request, "loreverse/edit_story.html", {
-        "form": form, "story": story
+        "form": form, "story": story,
+        "chapters": story.chapters.all().order_by("chapter_number")
     })
+
 
 @login_required
 def delete_story(request, story_id):
@@ -379,7 +370,9 @@ def story_detail(request, story_id):
             user=request.user,
             story=story
         ).exists()
-    return render(request, "loreverse/story_detail.html", {"story": story, "chapters": chapters , "completed": completed})
+    return render(request, "loreverse/story_detail.html", {
+        "story": story, "chapters": chapters , "completed": completed
+    })
 
 @login_required
 def toggle_favorite(request, story_id):
@@ -431,7 +424,34 @@ def create_chapter(request, story_id):
     else:
         form = ChapterForm()
     return render(request, "loreverse/create_chapter.html", {
-        "form": form, "story": story})
+        "form": form, "story": story
+    })
+
+
+@login_required
+def edit_chapter(request, chapter_id):
+    chapter = get_object_or_404(
+        Chapter,
+        id=chapter_id,
+        story__author=request.user
+    )
+
+    if request.user.profile.role != "Writer":
+        return redirect("profile")
+
+    if request.method == "POST":
+        form = ChapterForm(request.POST, instance=chapter)
+
+        if form.is_valid():
+            form.save()
+            return redirect("story_detail", story_id=chapter.story.id)
+    else:
+        form = ChapterForm(instance=chapter)
+
+    return render(request, "loreverse/edit_chapter.html", { 
+        "form": form, "chapter": chapter, "story": chapter.story,
+    })
+
 
 @login_required
 def read_chapter(request, story_id, chapter_id):
@@ -477,11 +497,12 @@ def read_chapter(request, story_id, chapter_id):
             comment.chapter = chapter
             comment.save()
 
-            return redirect(
-                "read_chapter",
-                story_id=story.id,
-                chapter_id=chapter.id
-            )
+            if request.headers.get("x-requested-with") == "XMLHttpRequest":
+              return JsonResponse({"username": comment.user.username,"content": comment.content,
+            })
+
+            return redirect( "read_chapter", story_id=story.id, chapter_id=chapter.id)
+
     else:
         comment_form = ChapterCommentForm()
 
@@ -531,11 +552,8 @@ def reader_dashboard(request):
     ).select_related("story").order_by("-last_read_at")
 
     return render(request, "loreverse/reader_dashboard.html", {
-        "progress": progress,
-        "favorites": favorites,
-        "want_to_read": want_to_read,
-        "completed_stories": completed_stories,
-        "reading_history": reading_history,
+        "progress": progress, "favorites": favorites, "want_to_read": want_to_read,
+        "completed_stories": completed_stories, "reading_history": reading_history,
     })
 
 @login_required
@@ -559,8 +577,7 @@ def add_world_image(request, story_id):
         form = WorldImageForm()
 
     return render(request, "loreverse/add_world_image.html", {
-        "form": form,
-        "story": story,
+        "form": form, "story": story,
     })
 
 @login_required
@@ -588,9 +605,7 @@ def add_character_image(request, story_id, character_id):
         form = CharacterImageForm()
 
     return render(request, "loreverse/add_character_image.html", {
-        "form": form,
-        "story": story,
-        "character": character,
+        "form": form,"story": story,  "character": character,
     })
 
 @login_required
@@ -618,9 +633,7 @@ def add_location_image(request, story_id, location_id):
         form = LocationImageForm()
 
     return render(request, "loreverse/add_location_image.html", {
-        "form": form,
-        "story": story,
-        "location": location,
+        "form": form, "story": story, "location": location,
     })
 
 @login_required
@@ -648,9 +661,7 @@ def add_creature_image(request, story_id, creature_id):
         form = CreatureImageForm()
 
     return render(request, "loreverse/add_creature_image.html", {
-        "form": form,
-        "story": story,
-        "creature": creature,
+        "form": form, "story": story, "creature": creature,
     })
 
 @login_required
@@ -665,11 +676,19 @@ def toggle_chapter_like(request, story_id, chapter_id):
 
     if like:
         like.delete()
+        user_liked = False
     else:
         ChapterLike.objects.create(
             user=request.user,
             chapter=chapter
         )
+        user_liked= True
 
-    return redirect(
-        "read_chapter",story_id=story.id,chapter_id=chapter.id)
+    likes_count = chapter.likes.count()    
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return JsonResponse({
+            "user_liked": user_liked,
+            "likes_count": likes_count,
+        })    
+
+    return redirect("read_chapter", story_id=story.id, chapter_id=chapter.id)

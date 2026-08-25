@@ -51,8 +51,10 @@
                     <div class="col-md-6 col-lg-4">
                         <div class="card h-100 shadow-sm border-0 story-card">
                             {% if story.cover_image %}
-                               <img src="{{ story.cover_image.url }}" alt="{{ story.title }} cover"
-                                class="card-img-top story-cover-image">
+                               <a href="{% url 'story_detail' story.id %}">
+                                  <img src="{{ story.cover_image.url }}" alt="{{ story.title }} cover"
+                                   class="card-img-top story-cover-image">
+                                </a>   
                             {% endif %}
                             <div class="card-body">
                                 <h4 class="card-title">
@@ -79,8 +81,10 @@
                     <div class="col-md-6 col-lg-4">
                         <div class="card h-100 shadow-sm border-0 story-card">
                            {% if story.cover_image %}
-                                <img src="{{ story.cover_image.url }}" alt="{{ story.title }} cover"
-                                class="card-img-top story-cover-image">
+                                <a href="{% url 'story_detail' story.id %}">
+                                   <img src="{{ story.cover_image.url }}" alt="{{ story.title }} cover"
+                                   class="card-img-top story-cover-image">
+                                </a>
                             {% endif %}
                            <div class="card-body">
                               <h4 class="card-title">
@@ -107,8 +111,10 @@
                     <div class="col-md-6 col-lg-4">
                         <div class="card h-100 shadow-sm border-0 story-card">
                            {% if story.cover_image %}
-                                <img src="{{ story.cover_image.url }}" alt="{{ story.title }} cover"
-                                class="card-img-top story-cover-image">
+                                <a href="{% url 'story_detail' story.id %}">
+                                   <img src="{{ story.cover_image.url }}" alt="{{ story.title }} cover"
+                                   class="card-img-top story-cover-image">
+                                </a>   
                             {% endif %}
                            <div class="card-body">
                               <h4 class="card-title">
