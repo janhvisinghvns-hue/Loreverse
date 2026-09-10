@@ -286,3 +286,18 @@ The project uses Bootstrap together with custom CSS and JavaScript rather than r
 The supplied `db.sqlite3` and `media/` directory are part of the project demonstration. They allow the application to be run with the sample Loreverse content already available rather than requiring the evaluator to create all content from an empty database.
 
 Overall, Loreverse was built to demonstrate how Django models, authentication, relationships, templates, CSS, JavaScript, image handling, and responsive design can be combined to create a complete web application centered around both storytelling and exploration of fictional worlds
+
+
+## Live Demo
+
+* https://loreverse-1b6c.onrender.com/
+
+
+## Deployment
+
+* Loreverse is deployed on Render.
+* PostgreSQL is used as the production database.
+* Cloudinary is used for media file storage.
+* WhiteNoise is used to serve static files in production.
+* Gunicorn is used as the production web server.
+* The deployment repository is connected to Render, so new changes pushed to its `main` branch are automatically deployed.
